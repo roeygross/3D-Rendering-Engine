@@ -1,46 +1,98 @@
 package primitives;
 
 import static java.lang.Math.sqrt;
-
+/**
+ * Vector class represents a algebraic vector at the 3D Cartesian coordinate
+ * @author roeygross
+ */
 public class  Vector  extends Point {
 
 
-     Vector(Double3 xyz) {
+    /**
+     * Vector constructions by the Double3 constructor
+     * @param xyz point of the end of the vector while the start is at zero point
+     */
+    Vector(Double3 xyz) {
         super(xyz);
         if (xyz.equals(Double3.ZERO)) throw new IllegalArgumentException("Zero Vector can not be tolerate");
     }
 
+    /**
+     * Vector construction by three points in the 3D Cartesian coordinate
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
+     */
     public Vector(double x, double y, double z) {
         super(x, y, z);
         if (xyz.equals(Double3.ZERO)) throw new IllegalArgumentException("Zero Vector can not be tolerate");
 
     }
+
+    /**
+     * Vector addition
+     * @param v vector to add
+     * @return new vector of sum of vectors
+     */
     final public Vector add(Vector v)
     {
         return new Vector(this.xyz.add(v.xyz));
     }
+
+    /**
+     *
+     * @param rhs multiplier
+     * @return new scaled vector
+     */
     final public Vector scale (double rhs)
     {
         return new Vector(this.xyz.scale(rhs));
     }
+
+    /**
+     * Calculates cross product of two vectors
+     * @param v vector to multiply with
+     * @return the cross product of two vectors
+     */
     final public Vector crossProduct (Vector v)
     {
 
         return new Vector(this.xyz.d2*v.xyz.d3 - this.xyz.d3*v.xyz.d2,this.xyz.d3*v.xyz.d1-this.xyz.d1*v.xyz.d3,this.xyz.d1*v.xyz.d2-this.xyz.d2*v.xyz.d1);//calculate the cross product by this formula
 
     }
-   final  public double dotProduct (Vector v)
+
+    /**
+     * Calculates dot product of two vectors
+     * @param v vector to multiply with
+     * @return the dot product of two vectors
+     */
+    final  public double dotProduct (Vector v)
     {
         return this.xyz.d1*v.xyz.d1+this.xyz.d2 * v.xyz.d2+this.xyz.d3 *v.xyz.d3;
     }
-   final  public double lengthSquared ()
+
+    /**
+     * Calculates the squared length of the vector
+     * @return squared length of the vector
+     */
+    final  public double lengthSquared ()
     {
         return dotProduct(this);
     }
-   final  public double length()
+
+    /**
+     * Calculates the length of the vector
+     * @return length of vector
+     */
+    final  public double length()
     {
         return sqrt(lengthSquared());
     }
+
+    /**
+     * Calculates the normalization of the vector
+     * @return the normalized vector
+     */
     final public Vector normalize ()
     {
         return new Vector (this.xyz.reduce(this.length()));
