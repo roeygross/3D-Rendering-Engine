@@ -77,6 +77,7 @@ public class  Vector  extends Point {
      */
     final  public double lengthSquared ()
     {
+
         return dotProduct(this);
     }
 

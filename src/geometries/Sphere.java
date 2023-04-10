@@ -2,7 +2,6 @@ package geometries;
 
 import primitives.Point;
 import primitives.Vector;
-
 /**
  * Sphere class represents a sphere at the 3D world
  * @author roeygross
@@ -23,6 +22,7 @@ public class Sphere extends RadialGeometry{
 
     @Override
     final public Vector getNormal(Point point) {
-        return null;
+        //if (!isZero(point.distance(center)-radius))throw new IllegalArgumentException("Sphere- getNormal- the point is not inside the sphere");
+        return point.subtract(center).normalize();
     }
 }

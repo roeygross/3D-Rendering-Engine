@@ -9,6 +9,7 @@ import primitives.Vector;
  * @author roeygross
  */
 public class Cylinder extends Tube{
+
     /**
      * The height of the cylinder
      */
@@ -28,6 +29,20 @@ public class Cylinder extends Tube{
 
     @Override
     final public Vector getNormal(Point point) {
-        return null;
+        //for information about this calculate you may check on Tube
+        if (point.equals(axisRay.getP0())) return axisRay.getDir().scale(-1);//boundary case of point on first center
+        if (point.equals(axisRay.getDir().scale(height).add(axisRay.getP0())))
+            return axisRay.getDir();//boundary case of point on first center
+        //first EQ if the point is on the second base
+        if (point.subtract((Point) axisRay.getDir().scale(height).add(axisRay.getP0())).dotProduct(axisRay.getDir()) == 0) {
+            return axisRay.getDir();
+        }
+        //second EQ the point is on the first base
+
+        if (point.subtract(axisRay.getP0()).dotProduct(axisRay.getDir())==0 ) return axisRay.getDir().scale(-1);
+        //if the point is not on the first or second EQ nor on the boundary cases the normal is simply the op
+        return point.subtract(axisRay.getDir().scale(point.subtract(axisRay.getP0()).dotProduct(axisRay.getDir())).add(axisRay.getP0())).normalize();
     }
+
+
 }

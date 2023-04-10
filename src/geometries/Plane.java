@@ -24,7 +24,7 @@ public class Plane implements Geometry {
      * @param c third point on the plane
      */
     public Plane(Point a,Point b,Point c) {
-        normal=null;
+        normal=b.subtract(a).crossProduct(c.subtract(a)).normalize();//vector orthogonal to vab and vac vector should be unit vector
         p0=a;
     }
 
@@ -41,7 +41,9 @@ public class Plane implements Geometry {
 
     @Override
     public Vector getNormal(Point point) {
-        return null;
+
+        if ( !point.equals(p0)  && point.subtract(p0).dotProduct(normal)!=0)throw new IllegalArgumentException("Plane - getNormal - the point is not on the plane");
+        return normal;
     }
 
     /**
@@ -50,8 +52,6 @@ public class Plane implements Geometry {
      */
     public Vector getNormal()
     {
-        Vector x = new Vector(0,0,0);
-        x.subtract(x);
         return normal;
     }
 }

@@ -8,6 +8,8 @@ import static java.lang.Math.sqrt;
  * @author roeygross
  */
 public class Point {
+
+
     /**
      * Point will be represented by double3 type
      */
@@ -61,7 +63,7 @@ public class Point {
      */
     final public double distanceSquared(Point p)
     {
-        return this.xyz.d1 - p.xyz.d1+this.xyz.d2 - p.xyz.d2+this.xyz.d3 - p.xyz.d3;
+        return (this.xyz.d1 - p.xyz.d1)*(this.xyz.d1 - p.xyz.d1)+(this.xyz.d2 - p.xyz.d2)*(this.xyz.d2 - p.xyz.d2)+(this.xyz.d3 - p.xyz.d3)*(this.xyz.d3 - p.xyz.d3);
     }
 
     /**

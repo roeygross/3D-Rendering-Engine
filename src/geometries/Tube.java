@@ -2,7 +2,6 @@ package geometries;
 import primitives.Point;
 import primitives.Vector;
 import primitives.Ray;
-
 /**
  * Tube class represents a ray that has radius
  * @author roeygross
@@ -34,7 +33,20 @@ public class Tube extends  RadialGeometry{
     }
 
     @Override
-     public Vector getNormal(Point point) {
-        return null;
+     public Vector getNormal(Point point)
+    {
+        Vector op;
+        try //O is projection of P on cylinder's ray:  𝒕 = 𝒗  𝑷 − 𝑷𝟎 𝑶 = 𝑷𝟎 + 𝒕 ∙ 𝒗
+        {
+             op = point.subtract ((Point) axisRay.getDir().scale(axisRay.getDir().dotProduct(point.subtract(axisRay.getP0()))).add(axisRay.getP0()));
+
+        }
+        catch (IllegalArgumentException i)//1 extreme case when 𝑷 − 𝑷𝟎 is orthogonal to �
+        {
+            return point.subtract(axisRay.getP0()).normalize();
+        }
+        //if (!isZero(radius-op.length())) throw new IllegalArgumentException("Tube- GetNormal- the point is not on the tube");
+        return op.normalize();
+
     }
 }
