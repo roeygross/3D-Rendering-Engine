@@ -34,4 +34,9 @@ public class Ray {
     final public Vector getDir() {
         return dir;
     }
+
+    final public Point getPoing(double t) {
+        if (t<0) throw  (new IllegalArgumentException("getPoing must get a non negative value "));
+        return dir.scale(t).add(p0);
+    }
 }

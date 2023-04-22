@@ -1,7 +1,8 @@
 package geometries;
+import primitives.*;
 
-import primitives.Point;
-import primitives.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Plane class represents a plane at the 3D world
@@ -24,7 +25,7 @@ public class Plane implements Geometry {
      * @param c third point on the plane
      */
     public Plane(Point a,Point b,Point c) {
-        normal=b.subtract(a).crossProduct(c.subtract(a)).normalize();//vector orthogonal to vab and vac vector should be unit vector
+        normal=(b.subtract(a).crossProduct(c.subtract(a))).normalize();//vector orthogonal to vab and vac vector should be unit vector
         p0=a;
     }
 
@@ -40,9 +41,20 @@ public class Plane implements Geometry {
     }
 
     @Override
+    public List<Point> findIntsersections(Ray ray) {
+        if(p0.equals(ray.getP0())) return null;
+        Vector n = getNormal();
+        double nv =  ray.getDir().dotProduct(getNormal());
+        if (Util.isZero(nv)) return null;//the ray parallel or on the plane
+        double t= Util.alignZero((p0.subtract(ray.getP0() ).dotProduct(getNormal()))/nv) ;
+        if (t<=0) return null;//the ray points on the other direction
+        return  new ArrayList() {{add(ray.getPoing(t));}};
+    }
+
+    @Override
     public Vector getNormal(Point point) {
 
-        if ( !point.equals(p0)  && point.subtract(p0).dotProduct(normal)!=0)throw new IllegalArgumentException("Plane - getNormal - the point is not on the plane");
+        //if ( !point.equals(p0)  && point.subtract(p0).dotProduct(normal)!=0)throw new IllegalArgumentException("Plane - getNormal - the point is not on the plane");
         return normal;
     }
 

@@ -2,10 +2,13 @@ package geometriesTest;
 
 import geometries.Cylinder;
 
+import geometries.Sphere;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +35,10 @@ class CylinderTest {
 
         // =============== first Boundary Values Test ================== on the center
         assertEquals (1,cylinder.getNormal(new Point(0,0,0)).length(),0.000001,"the vector is not a unit one");
-        assertEquals(new Vector(-1,0,0),cylinder.getNormal(new Point(0,0,0)),"get normal returned wrong value");
+        assertEquals(
+                new Vector(-1,0,0),
+                cylinder.getNormal(new Point(0,0,0)),
+                "get normal returned wrong value");
         // =============== second Boundary Values Test ================== on the base
         assertEquals (1,cylinder.getNormal(new Point(1,0,0)).length(),0.000001,"the vector is not a unit one");
         assertEquals(new Vector(1,0,0),cylinder.getNormal(new Point(1,0,0)),"get normal returned wrong value");

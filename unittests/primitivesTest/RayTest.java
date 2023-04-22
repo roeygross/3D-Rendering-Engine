@@ -12,8 +12,10 @@ class RayTest {
     public void testConstructor()
     {
         Ray ray = new Ray(new Point(0,0,0),new Vector(1,1,1));
-        System.out.print(ray.getDir().toString());
-        assertTrue(isZero(ray.getDir().length()-1),"the vector is not a unit one");
+        assertEquals(1,
+                ray.getDir().length(),
+                0.001,
+                "the vector is not a unit one");
     }
 
 }

@@ -1,7 +1,6 @@
 package geometries;
-import primitives.Point;
-import primitives.Vector;
-import primitives.Ray;
+import primitives.*;
+import java.util.List;
 /**
  * Tube class represents a ray that has radius
  * @author roeygross
@@ -23,6 +22,10 @@ public class Tube extends  RadialGeometry{
         this.axisRay = axisRay;
     }
 
+    @Override
+    public List<Point> findIntsersections(Ray ray) {
+        return null;
+    }
 
     /**
      * Gets the tube's axis ray
@@ -41,7 +44,7 @@ public class Tube extends  RadialGeometry{
              op = point.subtract ((Point) axisRay.getDir().scale(axisRay.getDir().dotProduct(point.subtract(axisRay.getP0()))).add(axisRay.getP0()));
 
         }
-        catch (IllegalArgumentException i)//1 extreme case when 𝑷 − 𝑷𝟎 is orthogonal to �
+        catch (IllegalArgumentException i)//1 extreme case when 𝑷 − 𝑷𝟎 is orthogonal to v
         {
             return point.subtract(axisRay.getP0()).normalize();
         }

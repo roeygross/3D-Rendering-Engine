@@ -1,5 +1,5 @@
 package geometries;
-
+import java.util.List;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -9,6 +9,7 @@ import primitives.Vector;
  * @author roeygross
  */
 public class Cylinder extends Tube{
+
 
     /**
      * The height of the cylinder
@@ -28,13 +29,18 @@ public class Cylinder extends Tube{
     }
 
     @Override
+    public List<Point> findIntsersections(Ray ray) {
+        return null;
+    }
+
+    @Override
     final public Vector getNormal(Point point) {
         //for information about this calculate you may check on Tube
         if (point.equals(axisRay.getP0())) return axisRay.getDir().scale(-1);//boundary case of point on first center
-        if (point.equals(axisRay.getDir().scale(height).add(axisRay.getP0())))
+        if (point.equals(axisRay.getPoing(height)))
             return axisRay.getDir();//boundary case of point on first center
         //first EQ if the point is on the second base
-        if (point.subtract((Point) axisRay.getDir().scale(height).add(axisRay.getP0())).dotProduct(axisRay.getDir()) == 0) {
+        if (point.subtract((Point) axisRay.getPoing(height)).dotProduct(axisRay.getDir()) == 0) {
             return axisRay.getDir();
         }
         //second EQ the point is on the first base

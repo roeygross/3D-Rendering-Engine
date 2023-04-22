@@ -33,9 +33,11 @@ class VectorTest {
         // ============ Equivalence Partitions Tests ==============
         Vector v1 = new Vector (2,1,0);
         assertDoesNotThrow(() ->v1.scale(2));
-        Vector result = v1.scale(2);
-        Vector expected = new Vector(4,2,0);
-        assertEquals(expected,result,"ERROR-scale");
+        assertEquals(
+                new Vector(4,2,0),
+                v1.scale(2),
+                "ERROR-scale"
+        );
 
         // =============== Boundary Values Tests ==================
         assertThrows(IllegalArgumentException.class,()->v1.scale(0));// zero vector  need to be care

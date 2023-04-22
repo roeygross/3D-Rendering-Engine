@@ -1,12 +1,14 @@
 package geometries;
-
-import primitives.Point;
-import primitives.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import static java.lang.Math.sqrt;
+import primitives.*;
 /**
  * Sphere class represents a sphere at the 3D world
  * @author roeygross
  */
 public class Sphere extends RadialGeometry{
+
     final private Point center;
 
     /**
@@ -18,6 +20,25 @@ public class Sphere extends RadialGeometry{
     {
         super(radius);
         this.center=center;
+    }
+
+    @Override
+    public List<Point> findIntsersections(Ray ray) {
+        if (center.equals(ray.getP0())) return new ArrayList() {{add(ray.getPoing(radius));}};//boundary value po is center
+        Vector u= center.subtract(ray.getP0());
+        double tm = Util.alignZero(u.dotProduct(ray.getDir())) ;
+        double d= sqrt(Util.alignZero(u.lengthSquared()-tm*tm));
+        if (d>=radius) return null;
+        double th = sqrt(radius*radius-d*d);
+        if (Util.alignZero(tm+th)<=0 && Util.alignZero(tm-th)<=0 ) return null;
+        if (Util.alignZero(tm+th)<=0) return  new ArrayList() {{add(ray.getPoing(tm-th));}};//po inside the shpere
+        if (Util.alignZero(tm-th)<=0) return  new ArrayList() {{add(ray.getPoing(tm+th));}};//po inside the shpere
+
+
+        return new ArrayList() {{add(ray.getPoing(tm-th));add(ray.getPoing(tm+th));}};//regular case to intersection
+
+
+
     }
 
     @Override

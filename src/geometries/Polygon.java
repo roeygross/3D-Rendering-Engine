@@ -1,11 +1,10 @@
 package geometries;
 
 import static primitives.Util.isZero;
-
+import primitives.*;
 import java.util.List;
 
-import primitives.Point;
-import primitives.Vector;
+
 
 
 /** Polygon class represents two-dimensional polygon in 3D Cartesian coordinate
@@ -17,6 +16,11 @@ public class Polygon implements Geometry {
    /** Associated plane in which the polygon lays */
    protected final Plane       plane;
    private final int           size;
+
+   @Override
+   public List<Point> findIntsersections(Ray ray) {
+      return null;
+   }
 
    /** Polygon constructor based on vertices list. The list must be ordered by edge
     * path. The polygon must be convex.
@@ -38,6 +42,7 @@ public class Polygon implements Geometry {
     *                                  <li>The polygon is concave (not convex)</li>
     *                                  </ul>
     */
+
    public Polygon(Point... vertices) {
       if (vertices.length < 3)
          throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
