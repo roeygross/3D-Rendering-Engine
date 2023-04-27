@@ -91,4 +91,16 @@ public class Point {
         return xyz.equals(((Point) obj).xyz);
 
     }
+    public Point setX(double x)
+    {
+        return new Point(x, xyz.d2, xyz.d3);
+    }
+    public Point setY(double y)
+    {
+        return new Point(xyz.d1, y, xyz.d3);
+    }
+    public Point setZ(double z)
+    {
+        return new Point(xyz.d1, xyz.d2, z);
+    }
 }

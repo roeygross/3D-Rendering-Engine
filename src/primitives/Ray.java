@@ -39,4 +39,15 @@ public class Ray {
         if (t<0) throw  (new IllegalArgumentException("getPoing must get a non negative value "));
         return dir.scale(t).add(p0);
     }
+
+    @Override
+    public String toString() {
+        return p0.toString()+" "+dir.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Ray other)) return false;//if the type isnt vector
+        return dir.equals(((Ray)obj).dir) && p0.equals(( (Ray)obj).p0);
+    }
 }

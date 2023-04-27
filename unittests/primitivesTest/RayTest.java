@@ -18,4 +18,5 @@ class RayTest {
                 "the vector is not a unit one");
     }
 
+
 }
