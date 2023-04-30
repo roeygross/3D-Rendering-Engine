@@ -87,7 +87,8 @@ public class Camera {
     }
     public Camera spintUp(double angle)
     {
-        Point newPlace = place.add(new Point (0,0,distance*Math.sin(Math.toRadians(angle)))).setX(distance*Math.cos(Math.toRadians(angle)));
+        double tmpp = Math.sin(Math.toRadians(angle));
+        Point newPlace = place.add(new Point (0,0, tmpp)).setX(distance*Math.cos(Math.toRadians(angle)));
         Point tmp = place.add(vto.scale(distance));
         vto = place.add(vto.scale(distance)).subtract(newPlace).normalize();
         if (vto.dotProduct(vright)==0) vup=vright.crossProduct(vup).normalize();
