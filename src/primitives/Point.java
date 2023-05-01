@@ -8,7 +8,7 @@ import static java.lang.Math.sqrt;
  * @author roeygross
  */
 public class Point {
-
+    public static  Point ZERO= new Point(0,0,0);
 
     /**
      * Point will be represented by double3 type

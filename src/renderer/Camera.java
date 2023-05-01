@@ -4,6 +4,7 @@ import primitives.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.MissingResourceException;
 
 /*
 *class for implement camera
@@ -16,10 +17,84 @@ public class Camera {
     Vector vup;
     Vector vright;
     /* the highet and the width and the distance between the camera and the view plane*/
-    double highet;
+    double highet ;
     double width;
     double distance;
+    private ImageWriter imageWriter;
+    private RayTracerBase rayTracerBase;
 
+
+    public Camera setImageWriter(ImageWriter imageWriter) {
+        this.imageWriter = imageWriter;
+        return this;
+    }
+
+
+    public Camera setRayTracer(RayTracerBase rayTracerBase) {
+        this.rayTracerBase = rayTracerBase;
+        return this;
+    }
+    private Color castRay (int xIndex,int yIndex)
+    {
+        try
+        {
+            return rayTracerBase.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex));
+        }
+        catch (MissingResourceException missingResourceException)
+        {
+            throw (new UnsupportedOperationException("one or more of the field is not inialized"));
+        }
+    }
+    /**/
+    public void  renderImage()
+    {
+        try
+        {
+            int nX = imageWriter.getNx();
+            int ny = imageWriter.getNy();
+            for (int i=0;i<ny;++i)
+            {
+                for (int q=0;q<nX;q++)
+                {
+                    imageWriter.writePixel(q,i,castRay(q,i));
+                }
+            }
+        }
+        catch (MissingResourceException e)//unvaild varibles
+        {
+            throw (new UnsupportedOperationException("one or more of the field is not inialized"));
+        }
+
+
+    }
+    /*gets color and interval and paint a grid upon the image*/
+    public void printGrid(int interval,Color color)
+    {
+        int nX = imageWriter.getNx();
+        int ny = imageWriter.getNy();
+        for (int i=0;i<nX;i++)
+        {
+            for (int q=0;q<ny;q++)
+            {
+                if (i%interval==0||q%interval==0) imageWriter.writePixel(i,q,color);
+            }
+
+        }
+    }
+    /*create image from the information*/
+    public void writeToImage()
+    {
+        try
+        {
+            imageWriter.writeToImage();
+        }
+        catch (MissingResourceException missingResourceException)
+        {
+            throw (new UnsupportedOperationException("one or more of the field is not inialized"));
+
+        }
+
+    }
     public Camera(Point place, Vector vto, Vector vup) {
 
         this.place = place;

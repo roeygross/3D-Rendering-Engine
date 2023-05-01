@@ -1,4 +1,5 @@
 package primitives;
+import java.util.List;
 
 /**
  * Ray class represents a ray (=vector that starts from a specific point) in 3D Cartesian coordinates
@@ -49,5 +50,21 @@ public class Ray {
     public boolean equals(Object obj) {
         if (!(obj instanceof Ray other)) return false;//if the type isnt vector
         return dir.equals(((Ray)obj).dir) && p0.equals(( (Ray)obj).p0);
+    }
+    public Point findClosestPoint(List<Point> listPoints)
+    {
+        if (listPoints==null||listPoints.isEmpty()) return  null;
+        Point closestPoint = listPoints.get(0);
+        double closestDistance= closestPoint.distance(p0);
+        for (Point point:
+             listPoints) {
+            if (point.distance(p0)<closestDistance)
+            {
+                closestPoint = point;
+                closestDistance = point.distance(p0);
+            }
+        }
+        return closestPoint;
+
     }
 }
