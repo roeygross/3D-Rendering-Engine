@@ -91,16 +91,11 @@ public class Point {
         return xyz.equals(((Point) obj).xyz);
 
     }
-    public Point setX(double x)
+    /* regular multiple returns the Point (x1*x2,y1*y2,z1*z2)*/
+    final public Point multiplication(Vector v)
     {
-        return new Point(x, xyz.d2, xyz.d3);
+        return new Point(xyz.product(v.xyz));
     }
-    public Point setY(double y)
-    {
-        return new Point(xyz.d1, y, xyz.d3);
-    }
-    public Point setZ(double z)
-    {
-        return new Point(xyz.d1, xyz.d2, z);
-    }
+
+
 }

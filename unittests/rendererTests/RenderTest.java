@@ -40,6 +40,7 @@ public class RenderTest {
 
       camera.renderImage();
       camera.printGrid(100, new Color(YELLOW));
+
       camera.writeToImage();
    }
 

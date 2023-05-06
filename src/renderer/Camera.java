@@ -150,25 +150,26 @@ public class Camera {
     public double getDistance() {
         return distance;
     }
-    public Camera spinRight(double angle)
+    /*spinnig function cant get 90 angle or any multipltion or it.*/
+    public Camera spinX(double angle)//the functino use vector spin to change the diraction
     {
-        Point newPlace = place.add(new Point (0,distance*Math.cos(Math.toRadians(angle)),0)).setX(-distance*Math.sin(Math.toRadians(angle)));
-        vto = place.add(vto.scale(distance)).subtract(newPlace).normalize();
-        if (vto.dotProduct(vup)!=0) vup=vright.crossProduct(vup).normalize();
-           else vright = vto.crossProduct(vup).normalize();
-        place= newPlace;
-        return this;
 
-    }
-    public Camera spintUp(double angle)
-    {
-        double tmpp = Math.sin(Math.toRadians(angle));
-        Point newPlace = place.add(new Point (0,0, tmpp)).setX(distance*Math.cos(Math.toRadians(angle)));
-        Point tmp = place.add(vto.scale(distance));
-        vto = place.add(vto.scale(distance)).subtract(newPlace).normalize();
-        if (vto.dotProduct(vright)==0) vup=vright.crossProduct(vup).normalize();
-        else if(vto.dotProduct(vup)==0) vright=vto.crossProduct(vup).normalize();
-        place= newPlace;
+        vto = vto.spinX(angle);
+
+        vright = vto.crossProduct(vup);
         return this;
     }
+    public Camera spinY(double angle)//the functino use vector spin to change the diraction
+    {
+        vto = vto.spinY(angle);
+        vup = vright.crossProduct(vto);
+        return this;
+    }
+    public Camera spinZ(double angle)//the functino use vector spin to change the diraction
+    {
+        vto = vto.spinZ(angle);
+        vup = vright.crossProduct(vto);
+        return this;
+    }
+
 }

@@ -104,4 +104,26 @@ public class  Vector  extends Point {
         if (!(obj instanceof Vector other)) return false;//if the type isnt vector
         return super.equals((Point) obj);
     }
+    /*all the spin methods use spining matrix */
+    final public  Vector  spinX(double angle)
+    {
+        double angleRadian = Math.toRadians(angle);
+        double cos = Math.cos(angleRadian);
+        double sin = Math.sin(angleRadian);
+        return new Vector(xyz.d1,cos*xyz.d2+sin* xyz.d3,cos* xyz.d3-xyz.d2*sin);
+    }
+    final public Vector  spinY(double angle)
+    {
+        double angleRadian = Math.toRadians(angle);
+        double cos = Math.cos(angleRadian);
+        double sin = Math.sin(angleRadian);
+        return new Vector(xyz.d1*cos+ xyz.d3*sin,xyz.d2,cos* xyz.d3-xyz.d1*sin);
+    }
+    final public Vector  spinZ(double angle)
+    {
+        double angleRadian = Math.toRadians(angle);
+        double cos = Math.cos(angleRadian);
+        double sin = Math.sin(angleRadian);
+        return new Vector(xyz.d1*cos+ xyz.d3*sin,cos* xyz.d3-xyz.d1*sin,xyz.d2);
+    }
 }

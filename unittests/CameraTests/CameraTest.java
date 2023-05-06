@@ -64,10 +64,11 @@ class CameraTest {
 	 * test for spinning the camera right and left
 	 */
 	@Test
-	void spinRight() {
-		Camera camera = new Camera(new Point(2,0,0),new Vector(-1,0,0),new Vector(0,0,1));
+	void spinX() // test checks that all the vectors diraction are orthogonal to each othe
+	{
+		Camera camera = new Camera(Point.ZERO,new Vector(1,0,0),new Vector(0,0,1));
 		camera.setVPDistance(2);
-		camera.spinRight(40.452475134789275);
+		camera.spinX(30);
 		assertTrue(
 				camera.getVto().dotProduct(camera.getVup())==0,
 				"spinRight camera vectors are wrong"
@@ -76,15 +77,35 @@ class CameraTest {
 				camera.getVto().dotProduct(camera.getVright())==0,
 				"spinRight camera vectors are wrong"
 		);
-		assertEquals(
-				new Point(-1.297634189138421, 1.521888797244751, 0),
-				camera.getPlace(),
-				"spinRight camera location is wrong"
+
+	}
+	void spinY() // test checks that all the vectors diraction are orthogonal to each othe
+	{
+		Camera camera = new Camera(Point.ZERO,new Vector(1,0,0),new Vector(0,0,1));
+		camera.setVPDistance(2);
+		camera.spinY(30);
+		assertTrue(
+				camera.getVto().dotProduct(camera.getVup())==0,
+				"spinRight camera vectors are wrong"
 		);
-		assertEquals(
-				new Vector(1.297634189138421, -1.521888797244751, 0).normalize(),
-				camera.getVto(),
-				"spinRight vto is wrong"
+		assertTrue(
+				camera.getVto().dotProduct(camera.getVright())==0,
+				"spinRight camera vectors are wrong"
+		);
+
+	}
+	void spinZ() // test checks that all the vectors diraction are orthogonal to each othe
+	{
+		Camera camera = new Camera(Point.ZERO,new Vector(1,0,0),new Vector(0,0,1));
+		camera.setVPDistance(2);
+		camera.spinZ(30);
+		assertTrue(
+				camera.getVto().dotProduct(camera.getVup())==0,
+				"spinRight camera vectors are wrong"
+		);
+		assertTrue(
+				camera.getVto().dotProduct(camera.getVright())==0,
+				"spinRight camera vectors are wrong"
 		);
 
 	}
@@ -92,29 +113,5 @@ class CameraTest {
 	/**
 	 * Test method for {@link .${CLASS_NAME}.Name(.${CLASS_NAME})}.
 	 */
-	@Test
-	void spinUp() {
-		Camera camera = new Camera(new Point(2,0,0),new Vector(0,-1,0),new Vector(0,0,1));
-		camera.setVPDistance(2);
-		camera.spintUp(30.794791187843394);
-		assertEquals(
-				new Point(1.718012887340227, 0, 1.023929547836616),
-				camera.getPlace(),
-				"spinRight camera location is wrong"
-		);
-		assertEquals(
-				new Vector(-1.718012887340227, 0, -1.023929547836616).normalize(),
-				camera.getVto(),
-				"spinRight vto is wrong"
-		);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVup())==0,
-				"spinRight camera vectors are wrong"
-		);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVright())==0,
-				"spinRight camera vectors are wrong"
-		);
 
-	}
 }

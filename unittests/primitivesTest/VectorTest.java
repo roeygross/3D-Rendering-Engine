@@ -1,4 +1,5 @@
 package primitivesTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import primitives.Vector;
 
@@ -123,4 +124,56 @@ class VectorTest {
 
 
     }
+
+    /**
+     * Test method for {@link .primitives.Vector.SpinX(.primitives.Vector)}.
+     */
+
+    @Test
+    void testSpinX() {
+        // ============ Equivalence Partitions Tests ==============
+        assertEquals(
+                new Vector(0.5773502691896258,0.788675134594813,0.21132486540518725),
+                new Vector(1,1,1).normalize().spinX(30)
+        );
+        // =============== Boundary Values Tests ==================
+
+    }
+
+    /**
+     * Test method for {@link .primitives.Vector.SpinY(.primitives.Vector)}.
+     */
+    @Test
+    void testSpinY() {
+        // ============ Equivalence Partitions Tests ==============
+        assertEquals(
+                new Vector(0.788675134594813,0.5773502691896258,0.21132486540518725),
+                new Vector(1,1,1).normalize().spinY(30)
+        );
+
+        // =============== Boundary Values Tests ==================
+
+    }
+
+    /**
+     * Test method for {@link .primitives.Vector.SpinZ(.primitives.Vector)}.
+     */
+    @Test
+    void testSpinZ() {
+        // ============ Equivalence Partitions Tests ==============
+        assertEquals(
+                new Vector(0.788675134594813,0.21132486540518725,0.5773502691896258),
+                new Vector(1,1,1).normalize().spinZ(30)
+        );
+
+
+        // =============== Boundary Values Tests ==================
+
+    }
+
+
+    /**
+     * Test method for {@link .primitives.Vector.Multiplication(.primitives.Vector)}.
+     */
+
 }
