@@ -4,7 +4,6 @@ import primitives.Point;
 import primitives.Ray;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 /*
 * composite design pattern, allow to use the method findIntersection on a forms collection
@@ -23,7 +22,7 @@ public class Geometries {
     {
         formsList.addAll(List.of(geometries));
     }
-    public List<Point> findIntsersections(Ray ray)
+    public List<Point> findIntersection(Ray ray)
     {
         if (formsList.size()==0) return  null;
         List <Point> l = new ArrayList<>() ;

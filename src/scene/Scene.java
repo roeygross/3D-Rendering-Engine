@@ -2,6 +2,8 @@ package scene;
 import geometries.Geometries;
 import lighting.AmbientLight;
 import primitives.*;
+import java.io.File;
+
 public class Scene {
     public String name;
     public Color background = Color.BLACK;
@@ -16,7 +18,12 @@ public class Scene {
         this.name = name;
         return  this;
     }
-
+    /*method get xml file and fil the info into the class*/
+    public Scene xmlSet(File xmlFile)
+    {
+        
+        return this;
+    }
     public Scene setBackground(Color background) {
         this.background = background;
         return this;

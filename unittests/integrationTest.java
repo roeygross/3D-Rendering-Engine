@@ -3,7 +3,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import primitives.Point;
-import primitives.Ray;
 import primitives.Vector;
 import renderer.Camera;
 
@@ -17,24 +16,24 @@ public class integrationTest {
      */
     static final int Nx = 3;
     static final int Ny = 3;
-    List<Point> createViewPlane(Geometries geometries, Camera camera)
+    int countinetsection(Geometries geometries, Camera camera)
     {
         List<Point> result = new ArrayList<>();
         Point pc = camera.getPlace().add(camera.getVto().scale(camera.getDistance()));
         double ry =camera.getHighet()/Ny;
         double rx= camera.getWidth()/Nx;
-        camera.setVPSize(3, 3).setVPDistance(4);
         for (int i=0;i<Ny;++i)
         {
             double yi = -(i-(Ny-1)/2)*ry;
             for (int j=0;j<Nx;++j)
             {
 
-                result.addAll(geometries.findIntsersections( camera.constructRay(Nx, Ny, j, i)));
+                result.addAll(geometries.findIntersection( camera.constructRay(Nx, Ny, j, i)));
 
             }
         }
-        return result;
+        if (result==null) return 0;
+        return result.size();
     }
     @Test
     void SphereTest() {
@@ -43,7 +42,7 @@ public class integrationTest {
         camera.setVPSize(3,3).setVPDistance(4);
         assertEquals(
                 10,
-                createViewPlane(new Geometries(sphere),camera).size(),
+               countinetsection (new Geometries(sphere),camera),
                 "integration test for sphere doesn't work"
         );
     }
@@ -59,7 +58,7 @@ public class integrationTest {
         Triangle triangle = new Triangle(new Point(0,0,-4),new Point(-6,0,0),new Point(0, -16.516541450298497, 0));
         assertEquals(
                 1,
-                createViewPlane(new Geometries(triangle),camera).size(),
+                countinetsection(new Geometries(triangle),camera),
                 "integration test for plane doesn't work"
         );
 
@@ -76,7 +75,7 @@ public class integrationTest {
         Plane plane = new Plane(new Point(0,0,-2),new Point(0,-4,0),new Point(-3,0,0));
         assertEquals(
                 9,
-                createViewPlane(new Geometries(plane),camera).size(),
+                countinetsection(new Geometries(plane),camera),
                 "integration test for plane doesn't work"
         );
 

@@ -2,6 +2,7 @@ package rendererTests;
 
 import static java.awt.Color.YELLOW;
 
+
 import org.junit.jupiter.api.Test;
 
 import geometries.Sphere;
@@ -10,10 +11,17 @@ import lighting.AmbientLight;
 import primitives.*;
 import renderer.*;
 import scene.Scene;
+import java.io.File;
+
+
+import javax.sql.rowset.spi.XmlReader;
+
+
 
 /** Test rendering a basic image
  * @author Dan */
 public class RenderTest {
+
 
    /** Produce a scene with basic 3D model and render it into a png image with a
     * grid */
@@ -83,6 +91,8 @@ public class RenderTest {
    @Test
    public void basicRenderXml() {
       Scene  scene  = new Scene("XML Test scene");
+      File xmlFile = new File("basicRenderTestTwoColors.xml");
+      scene.xmlSet(xmlFile);
       // enter XML file name and parse from XML file into scene object
       // using the code you added in appropriate packages
       // ...

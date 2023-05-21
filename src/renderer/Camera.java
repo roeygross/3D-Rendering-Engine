@@ -30,11 +30,12 @@ public class Camera {
     }
 
 
-    public Camera setRayTracer(RayTracerBase rayTracerBase) {
-        this.rayTracerBase = rayTracerBase;
+    public Camera setRayTracer(RayTracerBase rayTracer) {
+        this.rayTracerBase = rayTracer;
         return this;
     }
-    private Color castRay (int xIndex,int yIndex)
+    private Color
+    castRay (int xIndex,int yIndex)
     {
         try
         {
@@ -56,7 +57,8 @@ public class Camera {
             {
                 for (int q=0;q<nX;q++)
                 {
-                    imageWriter.writePixel(q,i,castRay(q,i));
+                    Color color = castRay(q, i);
+                    imageWriter.writePixel(q,i, color);
                 }
             }
         }
@@ -76,7 +78,9 @@ public class Camera {
         {
             for (int q=0;q<ny;q++)
             {
-                if (i%interval==0||q%interval==0) imageWriter.writePixel(i,q,color);
+                if (i%interval==0||q%interval==0) {
+                    imageWriter.writePixel(i,q,color);
+                }
             }
 
         }

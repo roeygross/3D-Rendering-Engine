@@ -4,7 +4,6 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
-import java.util.List;
 
 
 public class RayTracerBasic extends RayTracerBase{
@@ -19,7 +18,7 @@ public class RayTracerBasic extends RayTracerBase{
     @Override
     public Color traceRay(Ray ray) {
 
-        return calcColor(ray.findClosestPoint(scene.geometries.findIntsersections(ray)));
+        return calcColor(ray.findClosestPoint(scene.geometries.findIntersection(ray)));
     }
 
 }

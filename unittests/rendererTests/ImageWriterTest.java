@@ -15,13 +15,12 @@ class ImageWriterTest {
         ImageWriter imageWriter = new ImageWriter("letsStudy",800,500);
         Color yellow = new Color(255,255,0);
         Color red = new Color(255,0,0);
-        for (int i=0;i<800;i++)
+        for (int i=0;i<800;i+=50)
         {
 
-            for (int q=0;q<500;q++)
+            for (int q=0;q<500;q+=50)
             {
-                if (i%50==0||q%50==0) imageWriter.writePixel(i,q,red);
-                else imageWriter.writePixel(i,q,yellow);
+                imageWriter.writePixel(i,q,red);
             }
 
         }
