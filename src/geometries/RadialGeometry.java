@@ -4,7 +4,7 @@ package geometries;
  * RadialGeometry class represents any radial geometry by saving its radius
  * @author roeygross
  */
-public abstract class RadialGeometry implements Geometry {
+public abstract class RadialGeometry extends Geometry {
     /**
      * Radius represents the distance between the middle and the edge in a radial geometry
      */

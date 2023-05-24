@@ -23,22 +23,19 @@ public class Sphere extends RadialGeometry{
     }
 
     @Override
-    public List<Point> findIntsersections(Ray ray) {
-        if (center.equals(ray.getP0())) return new ArrayList() {{add(ray.getPoing(radius));}};//boundary value po is center
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        if (center.equals(ray.getP0())) return List.of(new GeoPoint(this,ray.getPoing(radius))); //boundary value po is center
         Vector u= center.subtract(ray.getP0());
         double tm = Util.alignZero(u.dotProduct(ray.getDir())) ;
         double d= sqrt(Util.alignZero(u.lengthSquared()-tm*tm));
         if (d>=radius) return null;
         double th = sqrt(radius*radius-d*d);
         if (Util.alignZero(tm+th)<=0 && Util.alignZero(tm-th)<=0 ) return null;
-        if (Util.alignZero(tm+th)<=0) return  new ArrayList() {{add(ray.getPoing(tm-th));}};//po inside the shpere
-        if (Util.alignZero(tm-th)<=0) return  new ArrayList() {{add(ray.getPoing(tm+th));}};//po inside the shpere
+        if (Util.alignZero(tm+th)<=0) return List.of(new GeoPoint(this,ray.getPoing(tm-th))); //po inside the shpere
+        if (Util.alignZero(tm-th)<=0) return List.of(new GeoPoint(this,ray.getPoing(tm+th))); ;//po inside the shpere
 
 
-        return new ArrayList() {{add(ray.getPoing(tm-th));add(ray.getPoing(tm+th));}};//regular case to intersection
-
-
-
+        return List.of(new GeoPoint(this,ray.getPoing(tm-th))); //regular case to intersection
     }
 
     @Override

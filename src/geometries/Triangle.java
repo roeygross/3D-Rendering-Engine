@@ -2,7 +2,6 @@ package geometries;
 
 import primitives.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,14 +24,14 @@ public class Triangle extends Polygon{
     }
 
     @Override
-    public List<Point> findIntsersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         try
         {
-            List<Point> list = plane.findIntsersections(ray);
-            if (list == null) return null;
-            Point p= list.get(0);
-            Vector n2 = vertices.get(2).subtract(vertices.get(1)).crossProduct(vertices.get(1).subtract(p));
-            if ((vertices.get(1).subtract(vertices.get(0)).crossProduct(vertices.get(0).subtract(p))).dotProduct(n2)>0 && n2.dotProduct((vertices.get(0).subtract(vertices.get(2)).crossProduct(vertices.get(2).subtract(p))))>0) return list;//the point is inside the triangle
+            List<GeoPoint> planeGeoIntersections = plane.findGeoIntersectionsHelper(ray);
+            if (planeGeoIntersections == null) return null;
+            Point intersectionPoint = planeGeoIntersections.get(0).point;
+            Vector n2 = vertices.get(2).subtract(vertices.get(1)).crossProduct(vertices.get(1).subtract(intersectionPoint));
+            if ((vertices.get(1).subtract(vertices.get(0)).crossProduct(vertices.get(0).subtract(intersectionPoint))).dotProduct(n2)>0 && n2.dotProduct((vertices.get(0).subtract(vertices.get(2)).crossProduct(vertices.get(2).subtract(intersectionPoint))))>0) return List.of(new GeoPoint(this,intersectionPoint));//the point is inside the triangle
             return null;
         }
         catch (IllegalArgumentException i)//boundry values

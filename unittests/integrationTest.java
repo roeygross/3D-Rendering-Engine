@@ -28,7 +28,7 @@ public class integrationTest {
             for (int j=0;j<Nx;++j)
             {
 
-                result.addAll(geometries.findIntersection( camera.constructRay(Nx, Ny, j, i)));
+                result.addAll(geometries.findIntersections( camera.constructRay(Nx, Ny, j, i)));
 
             }
         }

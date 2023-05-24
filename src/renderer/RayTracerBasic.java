@@ -4,21 +4,22 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
+import geometries.Intersectable.GeoPoint;
 
 
 public class RayTracerBasic extends RayTracerBase{
     public RayTracerBasic(Scene scene) {
         super(scene);
     }
-    private Color calcColor (Point point)
+    private Color calcColor (GeoPoint geoPoint)
     {
-        if (point == null) return scene.background;
-        return  scene.ambientLight.getIntensity();
+        if (geoPoint == null) return scene.background;
+        return  scene.ambientLight.getIntensity().add(geoPoint.getEmission());
     }
     @Override
     public Color traceRay(Ray ray) {
 
-        return calcColor(ray.findClosestPoint(scene.geometries.findIntersection(ray)));
+        return calcColor(ray.findClosestGeoPoint(scene.geometries.findGeoIntersectionsHelper(ray)));
     }
 
 }

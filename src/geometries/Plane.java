@@ -8,7 +8,7 @@ import java.util.List;
  * Plane class represents a plane at the 3D world
  * @author roeygross
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
     /**
      * The normal vector to the plane
      */
@@ -41,14 +41,14 @@ public class Plane implements Geometry {
     }
 
     @Override
-    public List<Point> findIntsersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         if(p0.equals(ray.getP0())) return null;
         Vector n = getNormal();
         double nv =  ray.getDir().dotProduct(getNormal());
         if (Util.isZero(nv)) return null;//the ray parallel or on the plane
         double t= Util.alignZero((p0.subtract(ray.getP0() ).dotProduct(getNormal()))/nv) ;
         if (t<=0) return null;//the ray points on the other direction
-        return  new ArrayList() {{add(ray.getPoing(t));}};
+        return  List.of(new GeoPoint(this,ray.getPoing(t)));
     }
 
     @Override

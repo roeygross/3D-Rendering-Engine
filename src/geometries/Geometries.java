@@ -8,7 +8,7 @@ import java.util.List;
 /*
 * composite design pattern, allow to use the method findIntersection on a forms collection
 * */
-public class Geometries {
+public class Geometries extends Intersectable {
     private List<Intersectable> formsList;
 
     public Geometries() {
@@ -22,13 +22,13 @@ public class Geometries {
     {
         formsList.addAll(List.of(geometries));
     }
-    public List<Point> findIntersection(Ray ray)
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray)
     {
         if (formsList.size()==0) return  null;
-        List <Point> l = new ArrayList<>() ;
+        List <GeoPoint> l = new ArrayList<>() ;
         for (Intersectable i:formsList)
         {
-            List<Point> tmp = i.findIntsersections(ray);
+            List<GeoPoint> tmp = i.findGeoIntersectionsHelper(ray);
             if (tmp!= null) l.addAll(tmp);
         }
         return l;

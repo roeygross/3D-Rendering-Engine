@@ -46,19 +46,19 @@ class TriangleTest {
         /* ============ first Equivalence Partitions Tests ==============  one intersect*/
         assertEquals(
                 new ArrayList() {{add(new Point(-0.312267938755213, 0.303773122945835, 0.383958938298951));}},
-                triangle.findIntsersections(new Ray(new Point  (-0.161168247993315, 0.156783889527054, 0.198169525932423),new Vector (-0.681654255131519,0.663110797336576,0.838149587596402)))
+                triangle.findIntersections(new Ray(new Point  (-0.161168247993315, 0.156783889527054, 0.198169525932423),new Vector (-0.681654255131519,0.663110797336576,0.838149587596402)))
                 ,"triangle findIntserctions doesn't work"
         );
         // ============ second Equivalence Partitions Tests ============== the ray intersect the plane which contain the triangle
         assertEquals(
                 null,
-                triangle.findIntsersections(new Ray(new Point  (0,-1,0),new Vector (0.491148577250395, 1.840858465907946, 0.650290111342449)))
+                triangle.findIntersections(new Ray(new Point  (0,-1,0),new Vector (0.491148577250395, 1.840858465907946, 0.650290111342449)))
                 ,"triangle findIntserctions doesn't work"
         );
         // ============ third Equivalence Partitions Tests ============== the ray is not intersect the plane which contain the triangle
         assertEquals(
                 null,
-                triangle.findIntsersections(new Ray(new Point  (0,0,-1),new Vector (-2.882078564508556, -0.682305953275544, 1.575279632945972)))
+                triangle.findIntersections(new Ray(new Point  (0,0,-1),new Vector (-2.882078564508556, -0.682305953275544, 1.575279632945972)))
                 ,"triangle findIntserctions doesn't work"
         );
         triangle = new Triangle(new Point(0,1,0),new Point(-1,0,0),new Point(0,0,2));
@@ -66,19 +66,19 @@ class TriangleTest {
         // =============== first Boundary Value Tests ================== against the edge
         assertEquals(
                 null,
-                triangle.findIntsersections(new Ray(new Point  (0,0,-1),new Vector (-0.488126535616246, 0.511873464383754, 1)))
+                triangle.findIntersections(new Ray(new Point  (0,0,-1),new Vector (-0.488126535616246, 0.511873464383754, 1)))
                 ,"triangle findIntserctions doesn't work"
         );
         // =============== second Boundary Value Tests ================== against the vertex
         assertEquals(
                 null,
-                triangle.findIntsersections(new Ray(new Point  (1,0,0),new Vector (-1.663099686770676, 0, 3.326199373541352)))
+                triangle.findIntersections(new Ray(new Point  (1,0,0),new Vector (-1.663099686770676, 0, 3.326199373541352)))
                 ,"triangle findIntserctions doesn't work"
         );
         // =============== third Boundary Value Tests ================== on the vertex
         assertEquals(
                 null,
-                triangle.findIntsersections(new Ray(new Point  (2,0,0),new Vector  (-2, 3.1272332639975,0)))
+                triangle.findIntersections(new Ray(new Point  (2,0,0),new Vector  (-2, 3.1272332639975,0)))
                 ,"triangle findIntserctions doesn't work"
         );
 
