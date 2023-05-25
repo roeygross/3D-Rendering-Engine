@@ -19,16 +19,16 @@ import javax.imageio.*;
  */
 public class ImageWriter {
 
-	private int nX;
-	private int nY;
+	final private int nX;
+	final private int nY;
 
 
 	private static final String FOLDER_PATH = System.getProperty("user.dir") + "/images";
 
-	private BufferedImage image;
-	private String imageName;
+	final private BufferedImage image;
+	final private String imageName;
 	
-	private Logger logger = Logger.getLogger("ImageWriter");
+	final private Logger logger = Logger.getLogger("ImageWriter");
 
 	// ***************** Constructors ********************** //
 	/**
@@ -90,6 +90,23 @@ public class ImageWriter {
 	 */
 	public void writePixel(int xIndex, int yIndex, Color color) {
 		image.setRGB(xIndex, yIndex, color.getColor().getRGB());
+	}
+	public void printGrid(int interval,Color color)
+	{
+		for (int i=0;i<nX;i+= interval)
+		{
+			for (int j=0;j<nY; j++)
+			{
+				writePixel(i,j,color);
+			}
+		}
+		for (int i=0;i<nY;i+= interval)
+		{
+			for (int j=0;j<nX; j++)
+			{
+				writePixel(j,i,color);
+			}
+		}
 	}
 
 }

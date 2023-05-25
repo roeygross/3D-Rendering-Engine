@@ -2,8 +2,7 @@ package renderer;
 
 import primitives.*;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.MissingResourceException;
 
 /*
@@ -39,7 +38,7 @@ public class Camera {
     {
         try
         {
-            return rayTracerBase.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex));
+            return rayTracerBase.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex),vto);
         }
         catch (MissingResourceException missingResourceException)
         {
@@ -47,7 +46,7 @@ public class Camera {
         }
     }
     /**/
-    public void  renderImage()
+    public Camera  renderImage()
     {
         try
         {
@@ -61,6 +60,7 @@ public class Camera {
                     imageWriter.writePixel(q,i, color);
                 }
             }
+            return this;
         }
         catch (MissingResourceException e)//unvaild varibles
         {
@@ -72,18 +72,7 @@ public class Camera {
     /*gets color and interval and paint a grid upon the image*/
     public void printGrid(int interval,Color color)
     {
-        int nX = imageWriter.getNx();
-        int ny = imageWriter.getNy();
-        for (int i=0;i<nX;i++)
-        {
-            for (int q=0;q<ny;q++)
-            {
-                if (i%interval==0||q%interval==0) {
-                    imageWriter.writePixel(i,q,color);
-                }
-            }
-
-        }
+        imageWriter.printGrid(interval,color);
     }
     /*create image from the information*/
     public void writeToImage()

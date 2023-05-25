@@ -8,5 +8,5 @@ public abstract class RayTracerBase {
     public RayTracerBase(Scene scene) {
         this.scene = scene;
     }
-    public abstract Color traceRay(Ray ray);
+    public abstract Color traceRay(Ray ray,Vector vto);
 }

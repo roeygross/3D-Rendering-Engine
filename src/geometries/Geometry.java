@@ -1,14 +1,14 @@
 package geometries;
-import primitives.Color;
-import primitives.Point;
-import primitives.Vector;
+import primitives.*;
+
 public abstract class Geometry extends Intersectable {
-    /**
-     * Calculates the normal vector of the geometry
-     * @param point point on the plane
-     * @return normal vector of the geometry
-     * @author roeygross
-     */
+
+    private Material material = new Material();
+
+    public Material getMaterial() {
+        return material;
+    }
+
     protected Color emission = Color.BLACK;
 
     public Color getEmission() {
@@ -22,5 +22,22 @@ public abstract class Geometry extends Intersectable {
 
     public abstract Vector getNormal(Point point);
 
+
+    public Geometry setMaterial(Material material) {
+        this.material = material;
+        return this;
+    }
+    public  Double3 getKD ()
+    {
+        return material.kD;
+    }
+    public  Double3 getKS ()
+    {
+        return material.kS;
+    }
+    public  int getNShininess ()
+    {
+        return material.nShininess;
+    }
 
 }
