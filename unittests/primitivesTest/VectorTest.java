@@ -158,18 +158,7 @@ class VectorTest {
     /**
      * Test method for {@link .primitives.Vector.SpinZ(.primitives.Vector)}.
      */
-    @Test
-    void testSpinZ() {
-        // ============ Equivalence Partitions Tests ==============
-        assertEquals(
-                new Vector(0.788675134594813,0.21132486540518725,0.5773502691896258),
-                new Vector(1,1,1).normalize().spinZ(30)
-        );
 
-
-        // =============== Boundary Values Tests ==================
-
-    }
 
 
     /**

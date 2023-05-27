@@ -33,11 +33,30 @@ public class Sphere extends RadialGeometry{
         if (Util.alignZero(tm+th)<=0 && Util.alignZero(tm-th)<=0 ) return null;
         if (Util.alignZero(tm+th)<=0) return List.of(new GeoPoint(this,ray.getPoing(tm-th))); //po inside the shpere
         if (Util.alignZero(tm-th)<=0) return List.of(new GeoPoint(this,ray.getPoing(tm+th))); ;//po inside the shpere
-
-
-        return List.of(new GeoPoint(this,ray.getPoing(tm-th))); //regular case to intersection
+        return List.of(new GeoPoint(this,ray.getPoing(tm-th)),new GeoPoint(this,ray.getPoing(tm+th))); //regular case to intersection
     }
+    /*
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        if (center.equals(ray.getP0())) {
+            return List.of(new GeoPoint(this, center.add(ray.getDir())));
+        }
+        Vector u = center.subtract(ray.getP0());
+        double tm = ray.getDir().dotProduct(u);
+        double d = Math.sqrt(u.lengthSquared() - tm * tm);
 
+        if (d >= radius)
+            return null;
+        double th = Math.sqrt(radius * radius - d * d);
+        if (tm + th > 0) {
+            if (tm - th > 0) {
+                return List.of( new GeoPoint(this, ray.getPoing(tm - th)),new GeoPoint(this, ray.getPoing(tm + th)));
+            }
+            return List.of(new GeoPoint(this, ray.getPoing(tm + th)));
+        }
+        if (tm - th > 0)
+            return List.of(new GeoPoint(this, ray.getPoing(tm + th)));
+        return null;
+    }*/
     @Override
     final public Vector getNormal(Point point) {
         //if (!isZero(point.distance(center)-radius))throw new IllegalArgumentException("Sphere- getNormal- the point is not inside the sphere");

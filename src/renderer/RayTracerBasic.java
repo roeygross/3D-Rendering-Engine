@@ -31,9 +31,9 @@ public class RayTracerBasic extends RayTracerBase{
             {
                  narrowBeam = lightSource.getNarrowBeam();
                 iL = iL.add(lightSource.getIntensity(geoPoint.point));
-                kDtmp += Math.abs(l.dotProduct(normal));
+                kDtmp += Math.pow(Math.abs(l.dotProduct(normal)),narrowBeam);
                  r = l.subtract(normal.scale(2 * l.dotProduct(normal))).normalize();//reflecting vector from the surface
-                kStmp += Math.pow((Math.max(0, vto.scale(-1).dotProduct(r))), geoPoint.getNShininess()*narrowBeam);
+                kStmp += Math.pow((Math.max(0, vto.scale(-1).dotProduct(r))), geoPoint.getNShininess());
             }
         }
         kDS = geoPoint.getKD().scale(kDtmp).add(geoPoint.getKS().scale(kStmp));
