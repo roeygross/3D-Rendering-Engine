@@ -20,7 +20,7 @@ public class Camera {
     double width;
     double distance;
     private ImageWriter imageWriter;
-    private RayTracerBase rayTracerBase;
+    private RayTracerBase rayTracerBasic;
 
 
     public Camera setImageWriter(ImageWriter imageWriter) {
@@ -30,7 +30,7 @@ public class Camera {
 
 
     public Camera setRayTracer(RayTracerBase rayTracer) {
-        this.rayTracerBase = rayTracer;
+        this.rayTracerBasic = rayTracer;
         return this;
     }
     private Color
@@ -38,7 +38,7 @@ public class Camera {
     {
         try
         {
-            return rayTracerBase.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex),vto);
+            return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex),vto);
         }
         catch (MissingResourceException missingResourceException)
         {
@@ -172,14 +172,7 @@ public class Camera {
 
         return this;
     }
-    public Camera move(Point point)
-    {
-        place = place.add(point);
-        Point vp = vto.scale(distance);
-        vto =  vp.subtract(place).normalize();
-        vright = vto.crossProduct(vup);
-        return this;
-    }
+
     public Camera spinY(double angle)//the functino use vector spin to change the diraction
     {
         vto = vto.spinY(angle);
@@ -192,5 +185,6 @@ public class Camera {
         vup = vright.crossProduct(vto);
         return this;
     }
+
 
 }

@@ -9,6 +9,7 @@ public class PointLight extends Light implements LightSource{
     private double kC =1;
     private double kL = 0;
     private double kQ = 0;
+    private double narrowBeam = 1;
 
     public PointLight setkC(double kC) {
         this.kC = kC;
@@ -39,5 +40,15 @@ public class PointLight extends Light implements LightSource{
     @Override
     public Vector getL(Point p) {
         return p.subtract(position).normalize();
+    }
+
+
+    public PointLight setNarrowBeam(double narrowBeam) {
+        this.narrowBeam =narrowBeam;
+        return this;
+    }
+    @Override
+    public double getNarrowBeam() {
+        return narrowBeam;
     }
 }

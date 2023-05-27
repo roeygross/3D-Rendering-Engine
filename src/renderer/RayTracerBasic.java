@@ -22,16 +22,18 @@ public class RayTracerBasic extends RayTracerBase{
         Vector l;
         Vector normal;
         Vector r;
+        double narrowBeam;
         for (LightSource lightSource: scene.lights)//for all light source gather the |l*n|
         {
              l = lightSource.getL(geoPoint.point);
              normal = geoPoint.getNormal();
             if (Double3.ZERO.lowerThan(l.dotProduct(normal)*normal.dotProduct(vto))) //chek if the camera and the light source are on the same side of the surface
             {
+                 narrowBeam = lightSource.getNarrowBeam();
                 iL = iL.add(lightSource.getIntensity(geoPoint.point));
                 kDtmp += Math.abs(l.dotProduct(normal));
                  r = l.subtract(normal.scale(2 * l.dotProduct(normal))).normalize();//reflecting vector from the surface
-                kStmp += Math.pow((Math.max(0, vto.scale(-1).dotProduct(r))), geoPoint.getNShininess());
+                kStmp += Math.pow((Math.max(0, vto.scale(-1).dotProduct(r))), geoPoint.getNShininess()*narrowBeam);
             }
         }
         kDS = geoPoint.getKD().scale(kDtmp).add(geoPoint.getKS().scale(kStmp));
