@@ -152,6 +152,34 @@ public class Camera {
         vright = vto.crossProduct(vup);
         return this;
     }
+    public Camera rotateAroundPointRight(double angle, Point center )
+    {
+        double d = center.distance(place);
+        double radian = Math.toRadians(angle);
+        place = place.add(new Point(-d*Math.sin(radian),-d+d*Math.cos(radian),0));
+        vto =  center.subtract(place).normalize();
+        vright = vto.crossProduct(vup);
+
+        return this;
+    }
+    public Camera rotateAroundPointUP(double angle, Point center )
+    {
+        double d = center.distance(place);
+        double radian = Math.toRadians(angle);
+        place = place.add(new Point(0,-d*Math.sin(radian),-d+d*Math.cos(radian)));
+        vto =  center.subtract(place).normalize();
+        vup = vright.crossProduct(vto);
+
+        return this;
+    }
+    public Camera move(Point point)
+    {
+        place = place.add(point);
+        Point vp = vto.scale(distance);
+        vto =  vp.subtract(place).normalize();
+        vright = vto.crossProduct(vup);
+        return this;
+    }
     public Camera spinY(double angle)//the functino use vector spin to change the diraction
     {
         vto = vto.spinY(angle);

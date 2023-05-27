@@ -124,6 +124,6 @@ public class  Vector  extends Point {
         double angleRadian = Math.toRadians(angle);
         double cos = Math.cos(angleRadian);
         double sin = Math.sin(angleRadian);
-        return new Vector(xyz.d1*cos+ xyz.d3*sin,cos* xyz.d3-xyz.d1*sin,xyz.d2);
+        return new Vector(xyz.d1*cos - xyz.d2*sin,xyz.d1*sin+xyz.d2*cos,xyz.d3);
     }
 }

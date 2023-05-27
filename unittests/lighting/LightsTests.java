@@ -69,7 +69,8 @@ public class LightsTests {
 
       ImageWriter imageWriter = new ImageWriter("lightSphereDirectional", 500, 500);
       camera1.setImageWriter(imageWriter) //
-         .setRayTracer(new RayTracerBasic(scene1)) //
+         .setRayTracer(new RayTracerBasic(scene1))
+              .rotateAroundPointUP(180,new Point(0,0,-50))//
          .renderImage() //
          .writeToImage(); //
    }
@@ -110,7 +111,9 @@ public class LightsTests {
 
       ImageWriter imageWriter = new ImageWriter("lightTrianglesDirectional", 500, 500);
       camera2.setImageWriter(imageWriter) //
-         .setRayTracer(new RayTracerBasic(scene2)) //
+         .setRayTracer(new RayTracerBasic(scene2))
+              .spinX(8).spinY(1)
+              //
          .renderImage() //
          .writeToImage(); //
    }
