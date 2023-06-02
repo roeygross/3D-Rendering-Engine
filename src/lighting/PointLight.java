@@ -51,4 +51,9 @@ public class PointLight extends Light implements LightSource{
     public double getNarrowBeam() {
         return narrowBeam;
     }
+
+    @Override
+    public double getDistance(Point point) {
+        return position.distance(point);
+    }
 }

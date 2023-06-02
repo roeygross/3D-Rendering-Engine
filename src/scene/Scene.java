@@ -1,5 +1,6 @@
 package scene;
 import geometries.Geometries;
+import geometries.Intersectable;
 import lighting.AmbientLight;
 import lighting.LightSource;
 import primitives.*;
@@ -37,11 +38,19 @@ public class Scene {
         this.background = background;
         return this;
     }
-
+    public List<Intersectable.GeoPoint> findGeoIntersections(Ray ray)
+    {
+        return geometries.findGeoIntersections(ray);
+    }
+    public List<Intersectable.GeoPoint> findGeoIntersections(Ray ray,double maxDistance)
+    {
+        return geometries.findGeoIntersections(ray,maxDistance);
+    }
     public Scene setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
         return this;
     }
+
 
     public Scene setGeometries(Geometries geometries) {
         this.geometries = geometries;

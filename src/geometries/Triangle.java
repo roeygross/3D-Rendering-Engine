@@ -24,10 +24,10 @@ public class Triangle extends Polygon{
     }
 
     @Override
-    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
         try
         {
-            List<GeoPoint> planeGeoIntersections = plane.findGeoIntersectionsHelper(ray);
+            List<GeoPoint> planeGeoIntersections = plane.findGeoIntersectionsHelper(ray, maxDistance);
             if (planeGeoIntersections == null) return null;
             Point intersectionPoint = planeGeoIntersections.get(0).point;
             Vector n2 = vertices.get(2).subtract(vertices.get(1)).crossProduct(vertices.get(1).subtract(intersectionPoint));

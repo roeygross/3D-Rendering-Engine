@@ -21,13 +21,13 @@ public class Geometries extends Intersectable {
     {
         geometriesList.addAll(List.of(geometries));
     }
-    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray)
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance)
     {
         if (geometriesList.size()==0) return  null;
         List <GeoPoint> l = new ArrayList<>() ;
         for (Intersectable i: geometriesList)
         {
-            List<GeoPoint> tmp = i.findGeoIntersectionsHelper(ray);
+            List<GeoPoint> tmp = i.findGeoIntersectionsHelper(ray,maxDistance);
             if (tmp!= null) l.addAll(tmp);
         }
         return l;

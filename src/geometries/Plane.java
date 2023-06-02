@@ -41,13 +41,13 @@ public class Plane extends Geometry {
     }
 
     @Override
-    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
         if(p0.equals(ray.getP0())) return null;
         Vector n = getNormal();
         double nv =  ray.getDir().dotProduct(getNormal());
         if (Util.isZero(nv)) return null;//the ray parallel or on the plane
         double t= Util.alignZero((p0.subtract(ray.getP0() ).dotProduct(getNormal()))/nv) ;
-        if (t<=0) return null;//the ray points on the other direction
+        if (t<=0||t>maxDistance) return null;//the ray points on the other direction
         return  List.of(new GeoPoint(this,ray.getPoing(t)));
     }
 

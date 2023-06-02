@@ -24,6 +24,10 @@ public abstract class Intersectable {
             this.geometry = geometry;
             this.point = point;
         }
+        public Point add (Point point)
+        {
+            return this.point.add(point);
+        }
         public Color getIE()
         {
             return geometry.getEmission();
@@ -59,11 +63,16 @@ public abstract class Intersectable {
             return "Geometry: " + geometry.toString() + " Point: " + point.toString();
         }
     }
-    public List<GeoPoint> findGeoIntersections(Ray ray)
-    {
-        return findGeoIntersectionsHelper(ray);
+
+
+    public final List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
+        return findGeoIntersectionsHelper(ray, maxDistance);
     }
-    protected abstract List<GeoPoint> findGeoIntersectionsHelper(Ray ray);
+    public final List<GeoPoint> findGeoIntersections(Ray ray) {
+        return findGeoIntersections(ray, Double.POSITIVE_INFINITY);
+    }
+    protected abstract List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance);
 
 
-}
+
+    }

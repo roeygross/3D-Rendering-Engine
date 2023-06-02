@@ -23,17 +23,24 @@ public class Sphere extends RadialGeometry{
     }
 
     @Override
-    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
         if (center.equals(ray.getP0())) return List.of(new GeoPoint(this,ray.getPoing(radius))); //boundary value po is center
         Vector u= center.subtract(ray.getP0());
         double tm = Util.alignZero(u.dotProduct(ray.getDir())) ;
-        double d= sqrt(Util.alignZero(u.lengthSquared()-tm*tm));
+        double d= Util.alignZero(sqrt(Util.alignZero(u.lengthSquared()-tm*tm)));
         if (d>=radius) return null;
-        double th = sqrt(radius*radius-d*d);
-        if (Util.alignZero(tm+th)<=0 && Util.alignZero(tm-th)<=0 ) return null;
-        if (Util.alignZero(tm+th)<=0) return List.of(new GeoPoint(this,ray.getPoing(tm-th))); //po inside the shpere
-        if (Util.alignZero(tm-th)<=0) return List.of(new GeoPoint(this,ray.getPoing(tm+th))); ;//po inside the shpere
-        return List.of(new GeoPoint(this,ray.getPoing(tm-th)),new GeoPoint(this,ray.getPoing(tm+th))); //regular case to intersection
+        double th = Util.alignZero(sqrt(radius*radius-d*d));
+        double tmPlusTh = Util.alignZero(tm + th);
+        double tmMinusTh = Util.alignZero(tm - th);
+        if (tmPlusTh <=0 || tmPlusTh>maxDistance) {//if tmplusth is not good intersection
+            if (tmMinusTh<=maxDistance && tmMinusTh>0)return List.of(new GeoPoint(this,ray.getPoing(tm-th))); //po inside the shpere
+            return null;
+        }
+        if (tmMinusTh <=0 || tmMinusTh>maxDistance)//if tmminusth is not good intersection and because of the last if its known that tmplusth is a good intersection
+        {
+            return List.of(new GeoPoint(this,ray.getPoing(tm+th))); //po inside the shpere
+        }
+        return List.of(new GeoPoint(this,ray.getPoing(tm-th)),new GeoPoint(this,ray.getPoing(tm+th)));
     }
     /*
     public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {

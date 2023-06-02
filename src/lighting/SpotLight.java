@@ -6,7 +6,7 @@ import primitives.Vector;
 
 public class SpotLight extends PointLight{
     final private Vector direction;
-    protected SpotLight(Color intensity, Point position, Vector direction) {
+    public SpotLight(Color intensity, Point position, Vector direction) {
         super(intensity,position);
         this.direction = direction.normalize();
     }
