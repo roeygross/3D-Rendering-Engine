@@ -13,7 +13,7 @@ import java.util.List;
 public class RayTracerBasic extends RayTracerBase {
 
     /*stop condition for recursive tracing*/
-    private static final int MAX_CALC_COLOR_LEVEL = 10;
+    private static final int MAX_CALC_COLOR_LEVEL = 20;
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = Double3.ONE;
     /*  transparency returns the shadiness of a point base on the transparency of objects between this object and the light
@@ -72,7 +72,8 @@ public class RayTracerBasic extends RayTracerBase {
                 narrowBeam = lightSource.getNarrowBeam();
                 iL = iL.add(lightSource.getIntensity(intersectionPoint.point));
                 kDtmp += Math.pow(Math.abs(ln),narrowBeam);
-                r = l.subtract(normal.scale(2 * ln)).normalize();//reflecting vector from the surface
+                if (Util.isZero(ln)) r=normal.scale(-1);
+                else r = l.subtract(normal.scale(2 * ln)).normalize();//reflecting vector from the surface
                 kStmp += Math.pow((Math.max(0, vto.scale(-1).dotProduct(r))), intersectionPoint.getNShininess());
                 kDS = kDS.add(intersectionPoint.getKD().scale(kDtmp).add(intersectionPoint.getKS().scale(kStmp))).product(transparency(intersectionPoint,l,normal,lightSource));
             }
@@ -84,10 +85,7 @@ public class RayTracerBasic extends RayTracerBase {
     /*calc the color of point with all the effects*/
     private Color calcColor(GeoPoint intersection, Ray ray)
     {
-        if (intersection !=null)
-        {
-            int x=0;
-        }
+
         return calcColor(intersection,ray,MAX_CALC_COLOR_LEVEL, INITIAL_K);
     }
     /*recursive method
@@ -105,7 +103,7 @@ public class RayTracerBasic extends RayTracerBase {
     private Ray constructReflectedRay(GeoPoint geoPoint, Vector v, Vector normal)
     {
         double vn = v.dotProduct(normal);
-        if (vn==0) return new Ray(geoPoint.point,normal,normal);
+        if (Util.isZero(vn)) return new Ray(geoPoint.point,normal,normal);
         return new Ray(geoPoint.point,v.subtract(normal.scale(2 * vn)).normalize(),normal);
     }
     private Ray constructRefractedRay (GeoPoint geoPoint, Vector v, Vector normal)
