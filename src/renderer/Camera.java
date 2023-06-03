@@ -38,7 +38,7 @@ public class Camera {
     {
         try
         {
-            return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex),vto);
+            return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex));
         }
         catch (MissingResourceException missingResourceException)
         {

@@ -20,6 +20,7 @@ public abstract class Intersectable {
         {
             return geometry.getEmission();
         }
+
         public GeoPoint(Geometry geometry, Point point) {
             this.geometry = geometry;
             this.point = point;
@@ -28,10 +29,19 @@ public abstract class Intersectable {
         {
             return this.point.add(point);
         }
+        public double distance (GeoPoint geoPoint)
+        {
+            return this.point.distance(geoPoint.point);
+        }
+        public double distance (Point point)
+        {
+            return this.point.distance(point);
+        }
         public Color getIE()
         {
             return geometry.getEmission();
         }
+
         public Double3 getKD ()
         {
             return geometry.getKD();
@@ -44,6 +54,7 @@ public abstract class Intersectable {
         {
             return geometry.getNormal(point);
         }
+        public Material getMaterial(){return geometry.getMaterial();}
         public int getNShininess()
         {
             return geometry.getNShininess();

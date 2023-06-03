@@ -14,15 +14,14 @@ import scene.Scene;
  * @author Dan */
 public class ShadowTests {
 
-
-   private Intersectable sphere     = new Sphere( 60d,new Point(0, 0, -200))                                         //
+   final private Intersectable sphere     = new Sphere( 60d,new Point(0, 0, -200))                                         //
       .setEmission(new Color(BLUE))                                                                                  //
       .setMaterial(new Material().setKd(0.5).setKs(0.5).setnShininess(30));
 
-   private Material      trMaterial = new Material().setKd(0.5).setKs(0.5).setnShininess(30);
+   final private Material      trMaterial = new Material().setKd(0.5).setKs(0.5).setnShininess(30);
 
-   private Scene         scene      = new Scene("Test scene");
-   private Camera        camera     = new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0))   //
+   final private Scene         scene      = new Scene("Test scene");
+   final private Camera        camera     = new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0))   //
       .setVPSize(200, 200).setVPDistance(1000)                                                                       //
       .setRayTracer(new RayTracerBasic(scene));
 
@@ -52,7 +51,7 @@ public class ShadowTests {
 	public void sphereTriangleMove1() {
 		sphereTriangleHelper("shadowSphereTriangleMove1", //
 				new Triangle(new Point(-41.2136597914733, -41.2136597914733, 0.1264432910093), new Point(-58.900681576284, -10.4656260910643, -43.409422748977),
-                        new Point(-49.1173097449063, -55.2712920522814, -100.000922722034577)), //
+                        new Point(-49.1173097449063, -55.2712920522814, -100.000922722034577)),
 				new Point(-100, -100, 200));
 	}
 

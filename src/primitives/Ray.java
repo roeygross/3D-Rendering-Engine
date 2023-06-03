@@ -9,6 +9,7 @@ import java.util.List;
  * @author roeygross
  */
 public class Ray {
+    private static final double DELTA = 0.1; //constance varible for changing ray starting point
     final private Point p0;
     final private Vector dir;
 
@@ -21,6 +22,14 @@ public class Ray {
     public Ray(Point p0, Vector dir) {
         this.p0 = p0;
         this.dir = dir.normalize();
+    }
+    /*construct ray from point plus delta point to the normal's diraction*/
+    public  Ray (Point point, Vector diraction, Vector normal)
+    {
+
+        Vector delta = normal.scale(normal.dotProduct(diraction) >= 0 ? DELTA : -DELTA);
+        this.p0= point.add(delta);
+        this.dir=diraction.normalize();
     }
 
     /**
@@ -59,17 +68,20 @@ public class Ray {
         if (listPoints==null||listPoints.isEmpty()) return  null;
         Intersectable.GeoPoint closestGeoPoint = listPoints.get(0);
         double closestDistance= closestGeoPoint.point.distance(p0);
-        for (Intersectable.GeoPoint geoPoint:
+        for (Intersectable.GeoPoint pointOnRay:
              listPoints) {
-            if (geoPoint.point.distance(p0)<closestDistance)
+            if (pointOnRay.point.distance(p0)<closestDistance)
             {
-                closestGeoPoint = geoPoint;
-                closestDistance = geoPoint.point.distance(p0);
+                closestGeoPoint = pointOnRay;
+                closestDistance = pointOnRay.point.distance(p0);
             }
         }
         return closestGeoPoint;
 
     }
+
+    /*create ray from point and diraction and move the po in delata to the normal diraction*/
+
     public Point findClosestPoint(List<Point> points) {
         return points == null || points.isEmpty() ? null
                 : findClosestGeoPoint(points.stream().map(p -> new GeoPoint(null, p)).toList()).point;
