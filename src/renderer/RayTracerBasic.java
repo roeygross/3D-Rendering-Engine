@@ -12,17 +12,21 @@ import java.util.List;
 
 public class RayTracerBasic extends RayTracerBase {
 
-    /*stop condition for recursive tracing*/
+    /**
+     * stop condition for recursive tracing
+     */
     private static final int MAX_CALC_COLOR_LEVEL = 20;
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = Double3.ONE;
-    /*  transparency returns the shadiness of a point base on the transparency of objects between this object and the light
-    *@gp the point of which we want to calculate the shadiness - geoPoint type
-    *@l the direction of the light source - vector type
-    * @normal- the normal of the point - vector type
-    * @lightSource the light source of which the shadiness will be checked - lightSource type
-    *  */
 
+    /**
+     *
+     * @param gp the point of which we want to calculate the shadiness - geoPoint type
+     * @param l the direction of the light source - vector type
+     * @param normal the normal of the point - vector type
+     * @param lightSource the light source of which the shadiness will be checked - lightSource type
+     * @return shadiness of a point base on the transparency of objects between this object and the light
+     */
     private Double3 transparency(GeoPoint gp, Vector l, Vector normal, LightSource lightSource)//checks if the point should be shaded
     {
         Vector lightDirection = l.scale(-1); // from point to light source
@@ -37,17 +41,33 @@ public class RayTracerBasic extends RayTracerBase {
         }
         return ktr;
     }
-    /*find the closest intersection of the ray to geometries in the scene */
+
+    /**
+     * find the closest intersection of the ray to geometries in the scene
+     * @param ray
+     * @return point of interrsection
+     */
     private GeoPoint findClosestIntersection(Ray ray)
     {
         return ray.findClosestGeoPoint(scene.findGeoIntersections(ray));
 
     }
     /*constructor*/
+
+    /**
+     * Constructor raytracerbasic
+     * @param scene
+     */
     public RayTracerBasic(Scene scene) {
         super(scene);
     }
-    /*calculate the local effect by the formula of phong 𝑰𝑷 = 𝒌𝑨 ∙ 𝑰𝑨 + 𝑰𝑬 + 𝒌𝑫 ∙ 𝒍 ∙ 𝒏 + 𝒌𝑺 ∙ −𝒗 ∙ 𝒓𝒏𝒔𝒉 ∙ �*/
+
+    /**
+     * alculate the local effect by the formula of phong 𝑰𝑷 = 𝒌𝑨 ∙ 𝑰𝑨 + 𝑰𝑬 + 𝒌𝑫 ∙ 𝒍 ∙ 𝒏 + 𝒌𝑺 ∙ −𝒗 ∙ 𝒓𝒏𝒔𝒉 ∙ �
+     * @param intersectionPoint - intersection point
+     * @param rayFromViewPoint - ray from our view point
+     * @return
+     */
     private Color calcLocalEffects (GeoPoint intersectionPoint,Ray rayFromViewPoint)
     {
         if (intersectionPoint==null) return scene.background;
@@ -94,10 +114,16 @@ public class RayTracerBasic extends RayTracerBase {
 
         return calcColor(intersection,ray,MAX_CALC_COLOR_LEVEL, INITIAL_K);
     }
-    /*recursive method
-    * level of the recursive
-    * @k the factor of the calculation of the color
-    * */
+
+
+    /**
+     *  recursive method for calculating the color
+     * @param intersection point
+     * @param inRay ray
+     * @param level of the recursive
+     * @param k the factor of the calculation of the color
+     * @return
+     */
     private Color calcColor(GeoPoint intersection, Ray inRay,int level, Double3 k)
     {
         if (intersection==null) return scene.background;
@@ -106,12 +132,27 @@ public class RayTracerBasic extends RayTracerBase {
                 : color.add(calcGlobalEffects(intersection, inRay, level, k));
     }
 
+    /**
+     * constructing reflected ray
+     * @param geoPoint point
+     * @param v vector
+     * @param normal normal
+     * @return new ray
+     */
     private Ray constructReflectedRay(GeoPoint geoPoint, Vector v, Vector normal)
     {
         double vn = v.dotProduct(normal);
         if (Util.isZero(vn)) return new Ray(geoPoint.point,normal,normal);
         return new Ray(geoPoint.point,v.subtract(normal.scale(2 * vn)).normalize(),normal);
     }
+
+    /**
+     * consructing refracted ray
+     * @param geoPoint point
+     * @param v vector
+     * @param normal normal
+     * @return new ray
+     */
     private Ray constructRefractedRay (GeoPoint geoPoint, Vector v, Vector normal)
     {
         return new Ray(geoPoint.point,v,normal);
