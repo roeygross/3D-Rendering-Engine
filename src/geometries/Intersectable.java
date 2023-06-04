@@ -12,15 +12,29 @@ public abstract class Intersectable {
         var geoList = findGeoIntersections(ray);
         return geoList == null ? null : geoList.stream().map(gp -> gp.point).toList();
     }
-    /*passice data sturctue for returning intersections*/
+
+    /**
+     * Passive Data Structure for returning intersections
+     */
     public static class GeoPoint {
+        /**
+         * a geometry
+         */
         public Geometry geometry;
+        /**
+         * a point
+         */
         public Point point;
         public Color getEmission()
         {
             return geometry.getEmission();
         }
 
+        /**
+         * Constructs Geopoint using:
+         * @param geometry - a type of shape
+         * @param point - a point
+         */
         public GeoPoint(Geometry geometry, Point point) {
             this.geometry = geometry;
             this.point = point;
@@ -76,12 +90,28 @@ public abstract class Intersectable {
     }
 
 
+    /**
+     * method for finding the intersections between a ray and geometries
+     * @param ray - the intersecting ray in potential
+     * @param maxDistance - maximum distance between ray and intersection
+     * @return
+     */
     public final List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
         return findGeoIntersectionsHelper(ray, maxDistance);
     }
+    /**
+     * the same function as findGeoIntersections but without maximum distance
+     * max distance default here is infinity*/
     public final List<GeoPoint> findGeoIntersections(Ray ray) {
         return findGeoIntersections(ray, Double.POSITIVE_INFINITY);
     }
+
+    /**
+     * a helper function for the find geo intersections function
+     * @param ray
+     * @param maxDistance
+     * @return list of geopoint of intersections
+     */
     protected abstract List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance);
 
 

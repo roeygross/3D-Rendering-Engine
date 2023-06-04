@@ -82,14 +82,20 @@ public class RayTracerBasic extends RayTracerBase {
         iL = iL.scale(kDS);
         return iA.add(iE).add(iL);//𝑰𝑷 = 𝒌𝑨 ∙ 𝑰𝑨 + 𝑰𝑬 + 𝒌𝑫 ∙ 𝒍 ∙ 𝒏 + 𝒌𝑺 ∙ −𝒗 ∙ 𝒓𝒏𝒔𝒉 ∙ �
     }
-    /*calc the color of point with all the effects*/
+
+    /**
+     * calculates the color of point with all the effects
+     * @param intersection
+     * @param ray
+     * @return color of point
+     */
     private Color calcColor(GeoPoint intersection, Ray ray)
     {
 
         return calcColor(intersection,ray,MAX_CALC_COLOR_LEVEL, INITIAL_K);
     }
     /*recursive method
-    * @level of the recursive
+    * level of the recursive
     * @k the factor of the calculation of the color
     * */
     private Color calcColor(GeoPoint intersection, Ray inRay,int level, Double3 k)
@@ -139,6 +145,11 @@ public class RayTracerBasic extends RayTracerBase {
     }
 
 
+    /**
+     * finds the closest intersection with the ray and calaulates the color of it
+     * @param ray
+     * @return color of the closest intersection point
+     */
     @Override
     public Color traceRay(Ray ray) {
         GeoPoint closestPoint = findClosestIntersection(ray);

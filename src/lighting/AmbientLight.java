@@ -2,9 +2,11 @@ package lighting;
 
 import primitives.Color;
 import primitives.Double3;
-/*
-* ambient light for all the forms in the scene.
-* */
+
+
+/**
+ *  ambient light for all the forms in the scene.
+ */
 public class AmbientLight extends Light{
     public static final AmbientLight NONE =new AmbientLight(Color.BLACK,Double3.ZERO);
 

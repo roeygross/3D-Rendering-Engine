@@ -13,8 +13,16 @@ public class Scene {
     public Color background = Color.BLACK;
     public  AmbientLight ambientLight = AmbientLight.NONE;
     public Geometries geometries = new Geometries();
+    /**
+     * list of all the light sources
+     */
     public List<LightSource> lights = new LinkedList<>();
 
+    /**
+     * a constructor for lights
+      * @param lights - list of lights
+     * @return this for chaining
+     */
     public Scene setLights(List<LightSource> lights) {
         this.lights = lights;
         return this;
