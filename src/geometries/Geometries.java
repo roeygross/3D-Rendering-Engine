@@ -1,9 +1,12 @@
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /*
 * composite design pattern, allow to use the method findIntersection on a forms collection
 * */
@@ -21,7 +24,27 @@ public class Geometries extends Intersectable {
     {
         geometriesList.addAll(List.of(geometries));
     }
-    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance)
+
+    @Override
+    public boolean isPointInside(Point point) {
+        for (Intersectable geometry:
+             geometriesList) {
+            if (geometry.isPointInside(point))return true;
+        }
+        return  false;
+    }
+
+    public Vector getNormal(Point point)
+    {
+        for (Intersectable geometry:
+             geometriesList) {
+            if (geometry.isPointInside(point)) return geometry.getNormal(point);
+
+        }
+        return null;
+    }
+
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance)
     {
         if (geometriesList.size()==0) return  null;
         List <GeoPoint> l = new ArrayList<>() ;

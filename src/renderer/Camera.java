@@ -1,13 +1,15 @@
 package renderer;
+import java.security.SecureRandom;
 
 import primitives.*;
+import primitives.Vector;
 
 
-import java.util.MissingResourceException;
+import java.util.*;
 
 /*
-*class for implement camera
-*  */
+ *class for implement camera
+ *  */
 public class Camera {
     /*the location of the camera*/
     Point place;
@@ -21,6 +23,7 @@ public class Camera {
     double distance;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracerBasic;
+    AntiAliasing antiAliasing =AntiAliasing.NONE;
 
 
     public Camera setImageWriter(ImageWriter imageWriter) {
@@ -33,12 +36,29 @@ public class Camera {
         this.rayTracerBasic = rayTracer;
         return this;
     }
-    private Color
-    castRay (int xIndex,int yIndex)
+    private Color castRay (int xIndex,int yIndex)
     {
         try
         {
-            return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex));
+            switch (antiAliasing)
+            {
+                case NONE -> {
+                    return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex));
+
+                }
+                case GRID ->
+                {
+                    return rayTracerBasic.traceBeamRay(constructRayBeam(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()));
+                }
+                case Random ->
+                {
+                    return rayTracerBasic.traceBeamRay(constructRayBeamRandom(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()));
+                }
+                default ->
+                {
+                    throw (new UnsupportedOperationException("one or more of the field is not inialized"));
+                }
+            }
         }
         catch (MissingResourceException missingResourceException)
         {
@@ -109,13 +129,156 @@ public class Camera {
     }
     public Ray constructRay(int nX, int nY, int j, int i) {
 
-        Point pij = getPlace().add(vto.scale(distance));
-        double yi = -(i - ((double)nY - 1) / 2) * highet / nY;
-        if (yi !=0 ) pij = pij.add(vup.scale(yi));
-        double xj = (j - ((double)nX - 1) / 2) * width / nX;
-        if (xj !=0 ) pij = pij.add(vright.scale(xj));
+        Point pij = getCenterOfPixel(i,j,nX,nY,highet/nX,width/nY);
         return new Ray(place,pij.subtract(place));
     }
+    private Ray constructRayInPixel(int nX, int nY, int j, int i,Point center,int gridWidth, int gridHighet) {
+
+        Point pij = center;
+        double yi = -(i - ((double)gridHighet - 1) / 2) * (highet / nY) /gridHighet;
+        if (yi !=0 ) pij = pij.add(vup.scale(yi));
+        double xj = (j - ((double)gridWidth - 1) / 2) * (width/ nX) /gridWidth;
+        if (xj !=0 ) pij = pij.add(vright.scale(xj));
+        return new Ray(place,pij.subtract(place));
+
+    }
+    private Ray constructRayInPixelRandom(int nX, int nY, int j, int i,Point center,int gridWidth, int gridHighet) {
+
+        Point pij = center;
+        double yi = -(i - ((double)gridHighet - 1) / 2) * (highet / nY) /gridHighet;
+        if (yi !=0 ) pij = pij.add(vup.scale(yi));
+        double xj = (j - ((double)gridWidth - 1) / 2) * (width/ nX) /gridWidth;
+        if (xj !=0 ) pij = pij.add(vright.scale(xj));
+        return new Ray(place,generateRandomPoint(pij,Math.min(highet/nY,width/nX)/2).subtract(place));
+
+    }
+
+    private Point generateRandomPoint(Point center,double radius)
+    {
+
+        Point randomPoint = center;
+        double yi = -Math.floor(Math.random() *(radius - 0 + 1) + 0);//generate y coordinate from 0 to radius
+        if (yi !=0 ) randomPoint = randomPoint.add(vup.scale(yi));
+        double xj = Math.floor(Math.random() *((radius-yi) - 0 + 1) + 0);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
+        if (xj !=0 ) randomPoint = randomPoint.add(vright.scale(xj));
+        return randomPoint;
+    }
+    /*private Ray constructRayInPixelRandom(Point center,double radius)
+    {
+        Point randomPoint = center;
+        double yi = -Math.floor(Math.random() *(radius - 0 + 1) + 0);//generate y coordinate from 0 to radius
+        if (yi !=0 ) randomPoint = randomPoint.add(vup.scale(yi));
+        double xj = Math.floor(Math.random() *((radius-yi) - 0 + 1) + 0);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
+        if (xj !=0 ) randomPoint = randomPoint.add(vright.scale(xj));
+        return new Ray(place,randomPoint.subtract(place));
+    }*/
+    public List<Ray> constructRayBeam(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
+    {
+        List<Ray> beam = new ArrayList<>();
+        Point center = getCenterOfPixel(i,j,nX,nY, pixelHighet, pixelWidth);
+        for (int i1=0;i1<gridHighet;i1++)
+        {
+            for (int j1=0;j1<gridWidth;j1++)
+            {
+                beam.add(constructRayInPixel(nX, nY,j1,i1,center,gridWidth,gridHighet));
+            }
+        }
+        return beam;
+    }
+    public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
+    {
+        List<Ray> beam = new ArrayList<>();
+        Point center = getCenterOfPixel(i,j,nX,nY, pixelHighet, pixelWidth);
+        for (int i1=0;i1<gridHighet;i1++)
+        {
+            for (int j1=0;j1<gridWidth;j1++)
+            {
+                beam.add(constructRayInPixelRandom(nX, nY,j1,i1,center,gridWidth,gridHighet));
+            }
+        }
+        return beam;
+    }
+    /*public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
+    {
+        List<Ray> beam = new ArrayList<>();
+        Point center = getCenterOfPixel(i,j,nX,nY, pixelHighet, pixelWidth);
+        for (int i1=0;i1<gridHighet;i1++)
+        {
+            for (int j1=0;j1<gridWidth;j1++)
+            {
+                beam.add(constructRayInPixel(nX, nY,j1,i1,center,gridWidth,gridHighet));
+            }
+        }
+        return beam;
+    }*/
+    /*public List<Ray> constructRayBeamRandomDisk(int i, int j, int nX, int nY,int numOfRaysInBeam) {
+        List<Ray> beam = new ArrayList<>();
+        double pixelHighet = highet / nY;
+        double pixelWidth = width / nX;
+        Point center = getPlace().add(vto.scale(distance));
+        double yi = -(i - ((double) nY - 1) / 2) * pixelHighet;
+        if (yi != 0) center = center.add(vup.scale(yi));
+        double xj = (j - ((double) nX - 1) / 2) * pixelWidth;
+        if (xj != 0) center = center.add(vright.scale(xj));//the center of i j pixel
+        double radius = Math.sqrt(pixelHighet * pixelHighet + pixelWidth * pixelWidth);
+        double radiusDisk =radius/numOfRaysInBeam;
+        Ray randomRay = new Ray(place,generateRandomPoint(center,radiusDisk).subtract(place));
+        beam.add(randomRay);
+        for (int i1=0;i1<numOfRaysInBeam;i1++)
+        {
+            boolean goodPoint = true;
+            Point randomPoint = generateRandomPoint(center,radius);
+            for (Ray randomRayInArray:
+                 beam) {
+                if (randomRayInArray.distance(randomPoint)<radiusDisk)
+                {
+                    goodPoint = false;
+                    break;
+                }
+
+            }
+            if (goodPoint)
+            {
+                beam.add(new Ray(place,randomPoint.subtract(place)));
+            }
+        }
+        return  beam;
+    }*/
+
+    public Point getCenterOfPixel(int i, int j, int nX,int nY,double pixelHighet,double pixelWidth)
+    {
+        Point center = getPlace().add(vto.scale(distance));
+        double yi = -(i - ((double)nY - 1) / 2) * pixelHighet;
+        if (yi !=0 ) center = center.add(vup.scale(yi));
+        double xj = (j - ((double)nX - 1) / 2) * pixelWidth;
+        if (xj !=0 ) center = center.add(vright.scale(xj));
+        return center;
+    }
+    /*public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int numOfRaysInBeam, double pixelHighet, double pixelWidth)
+    {
+        List<Ray> beam = new ArrayList<>();
+        Point center = getCenterOfPixel(i,j,nX,nY,pixelHighet, pixelWidth);
+        //double radius = Math.sqrt(pixelHighet*pixelHighet+ pixelWidth* pixelWidth);
+        double radius =Math.min(pixelHighet, pixelWidth)/2;
+        double yRandom;
+        double xRandom;
+        Point randomPoint;
+        SecureRandom random = new SecureRandom();
+        SecureRandom randomS = new SecureRandom();
+        double yLimit = pixelHighet/2;
+        double xLimit = pixelWidth /2;
+        for (int rayCounter=0;rayCounter<numOfRaysInBeam;rayCounter++)
+        {
+             randomPoint = center;
+             //yRandom = -yLimit + (yLimit+ yLimit) * random.nextDouble();
+            yRandom = randomS.nextDouble(-yLimit,yLimit);
+            if (!Util.isZero(yRandom) ) randomPoint = randomPoint.add(vup.scale(yRandom));
+             xRandom =randomS.nextDouble(-xLimit,xLimit);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
+            if (!Util.isZero(xRandom) ) randomPoint = center = center.add(vright.scale(xRandom));
+            beam.add(new Ray(place,randomPoint.subtract(place)));
+        };
+        return beam;
+    }*/
     public Point getPlace() {
         return place;
     }
@@ -185,6 +348,5 @@ public class Camera {
         vup = vright.crossProduct(vto);
         return this;
     }
-
 
 }

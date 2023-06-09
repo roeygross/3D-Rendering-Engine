@@ -34,8 +34,7 @@ public abstract class Geometry extends Intersectable {
         return this;
     }
 
-    public abstract Vector getNormal(Point point);
-
+    public abstract  boolean isPointInside(Point point) ;
 
     public Geometry setMaterial(Material material) {
         this.material = material;

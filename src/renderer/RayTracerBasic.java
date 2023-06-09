@@ -197,8 +197,17 @@ public class RayTracerBasic extends RayTracerBase {
         if (closestPoint ==null ) return scene.background;
         return calcColor(closestPoint,ray);
     }
+    @Override
+    public Color traceBeamRay(List<Ray> beam) {
+        Color tmp = Color.BLACK;
+        for (Ray ray:
+                beam) {
+            Color color = traceRay(ray);
+            tmp = tmp.add(color);
+        }
+        return tmp.reduce(beam.size());
+    }
 
 }
-
 
 

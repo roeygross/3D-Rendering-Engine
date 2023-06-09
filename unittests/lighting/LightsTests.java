@@ -30,7 +30,7 @@ public class LightsTests {
    private static final double  KS                      = 0.5;
    private static final Double3 KS3                     = new Double3(0.2, 0.4, 0.3);
 
-   private final Material       material                = new Material().setKd(KD3).setKS(KS3).setnShininess(SHININESS);
+   private final Material       material                = new Material().setKd(KD3).setks(KS3).setnShininess(SHININESS);
    private final Color          trianglesLightColor     = new Color(800, 500, 250);
    private final Color          sphereLightColor        = new Color(800, 500, 0);
    private final Color          sphereColor             = new Color(BLUE).reduce(2);

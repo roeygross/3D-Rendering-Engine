@@ -17,10 +17,51 @@ public class Polygon extends Geometry {
    protected final Plane       plane;
    private final int           size;
 
+
+
    @Override
-   public List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
-      return null;
-   }
+   public List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance)
+   {
+      List<GeoPoint> res =plane.findGeoIntersections(ray,maxDistance);
+      //First ,we check if the plane of our polygon intersects with the ray ,if there's no intersection with the
+      //plane so there's no intersection with the polygon.
+      if (res == null) {
+         return res;
+      }
+
+      Point P0 = ray.getP0();
+      Vector v = ray.getDir();
+
+      Point P1 = vertices.get(1);
+      Point P2 = vertices.get(0);
+
+      Vector v1 = P1.subtract(P0);
+      Vector v2 = P2.subtract(P0);
+
+      double sign = Util.alignZero(v.dotProduct(v1.crossProduct(v2)));
+
+      if (isZero(sign)) {
+         return null;
+      }
+
+      boolean positive = sign > 0;
+
+      //iterate through all vertices of the polygon
+      for (int i = vertices.size() - 1; i > 0; --i) {
+         v1 = v2;
+         v2 = vertices.get(i).subtract(P0);
+
+         sign = Util.alignZero(v.dotProduct(v1.crossProduct(v2)));
+         if (isZero(sign)) {
+            return null;
+         }
+
+         if (positive != (sign > 0)) {
+            return null;
+         }
+      }
+      return List.of(new GeoPoint(this, res.get(0).point));
+}
 
    /** Polygon constructor based on vertices list. The list must be ordered by edge
     * path. The polygon must be convex.
@@ -42,7 +83,24 @@ public class Polygon extends Geometry {
     *                                  <li>The polygon is concave (not convex)</li>
     *                                  </ul>
     */
+   public Polygon(double radius, Point center,int edges) {
+      this.size = edges;
+      Point[] points = new Point[edges];
 
+      // Calculate the coordinates of the octagon vertices
+      double angleIncrement = Math.toRadians(360/edges);
+      double currentAngle = 0;
+
+      for (int i = 0; i < edges; i++) {
+         double x = center.getX() + radius * Math.cos(currentAngle);
+         double y = center.getY() + radius * Math.sin(currentAngle);
+         double z = center.getZ();
+         points[i] = new Point(x, y, z);
+         currentAngle += angleIncrement;
+      }
+      this.vertices  = List.of(points);
+      this.plane = new Plane(points[0], points[1], points[2]);
+   }
    public Polygon(Point... vertices) {
       if (vertices.length < 3)
          throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
@@ -84,9 +142,27 @@ public class Polygon extends Geometry {
       }
    }
 
+
+
    @Override
    public Vector getNormal(Point point) {
-      
+
       return plane.getNormal();
+   }
+
+   @Override
+   public boolean isPointInside(Point point) {
+      int i, j, n = vertices.size();
+      boolean isInside = false;
+
+      for (i = 0, j = n - 1; i < n; j = i++) {
+         if ((vertices.get(i).getY() > point.getY()) != (vertices.get(j).getY() > point.getY()) &&
+                 (point.getX() < (vertices.get(j).getX() - vertices.get(i).getX()) * (point.getY() - vertices.get(i).getY()) / (vertices.get(j).getY() - vertices.get(i).getY()) + vertices.get(i).getX()) &&
+                 (point.getZ() < (vertices.get(j).getZ() - vertices.get(i).getZ()) * (point.getY() - vertices.get(i).getY()) / (vertices.get(j).getY() - vertices.get(i).getY()) + vertices.get(i).getZ())) {
+            isInside = !isInside;
+         }
+      }
+
+      return isInside;
    }
 }

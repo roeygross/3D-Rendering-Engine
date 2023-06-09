@@ -124,6 +124,31 @@ public class  Vector  extends Point {
         double angleRadian = Math.toRadians(angle);
         double cos = Math.cos(angleRadian);
         double sin = Math.sin(angleRadian);
-        return new Vector(xyz.d1*cos - xyz.d2*sin,xyz.d1*sin+xyz.d2*cos,xyz.d3);
+        return new Vector(xyz.d1*cos - xyz.d2*sin,xyz.d1*sin+xyz.d2*cos,xyz.d3).normalize();
+    }
+    public Vector vectorRotate(Vector axis, double theta) {
+        double x = this.getX();
+        double y = this.getY();
+        double z = this.getZ();
+
+        double u = axis.getX();
+        double v = axis.getY();
+        double w = axis.getZ();
+
+        double v1 = u * x + v * y + w * z;
+
+        double thetaRad=Math.toRadians(theta);
+        double xPrime = u * v1 * (1d - Math.cos(thetaRad))
+                + x * Math.cos(thetaRad)
+                + (-w * y + v * z) * Math.sin(thetaRad);
+        double yPrime = v * v1 * (1d - Math.cos(thetaRad))
+                + y * Math.cos(thetaRad)
+                + (w * x - u * z) * Math.sin(thetaRad);
+
+        double zPrime = w * v1 * (1d - Math.cos(thetaRad))
+                + z * Math.cos(thetaRad)
+                + (-v * x + u * y) * Math.sin(thetaRad);
+
+        return new Vector(xPrime, yPrime, zPrime);
     }
 }

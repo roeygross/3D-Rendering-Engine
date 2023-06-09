@@ -51,6 +51,8 @@ public class Plane extends Geometry {
         return  List.of(new GeoPoint(this,ray.getPoing(t)));
     }
 
+
+
     @Override
     public Vector getNormal(Point point) {
 
@@ -65,5 +67,10 @@ public class Plane extends Geometry {
     public Vector getNormal()
     {
         return normal;
+    }
+
+    @Override
+    public boolean isPointInside(Point point) {
+        return true;
     }
 }

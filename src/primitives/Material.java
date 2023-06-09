@@ -70,7 +70,7 @@ public class Material {
         return this;
     }
 
-    public Material setKS(Double3 kS) {
+    public Material setks(Double3 kS) {
         this.kS = kS;
         return this;
     }

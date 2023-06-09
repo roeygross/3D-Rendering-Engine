@@ -1,6 +1,4 @@
-import geometries.Plane;
-import geometries.Sphere;
-import geometries.Triangle;
+import geometries.*;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.SpotLight;
@@ -21,7 +19,7 @@ public class imageBuild {
     private static final double  KS                      = 0.7;
     private static final Double3 KS3                     = new Double3(0.2, 0.4, 0.3);
 
-    private final Material       material                = new Material().setKd(KD3).setKS(KS3).setnShininess(SHININESS);
+    private final Material       material                = new Material().setKd(KD3).setks(KS3).setnShininess(SHININESS);
     private final Color          trianglesLightColor     = new Color(800, 500, 250);
     private final Color          sphereLightColor        = new Color(800, 500, 0);
     private final Color          sphereColor             = new Color(BLUE).reduce(2);
@@ -37,9 +35,9 @@ public class imageBuild {
     private Scene scene = new Scene("imageBuild");
 
 
-        /**
-         * Test method for {@link .${CLASS_NAME}.Name(.${CLASS_NAME})}.
-         */
+    /**
+     * Test method for {@link .${CLASS_NAME}.Name(.${CLASS_NAME})}.
+     */
     @Test
     void imageBuild() {
 
@@ -59,39 +57,47 @@ public class imageBuild {
         double ks = 0.3;
         double kr = 0.4;
         scene.setAmbientLight(new AmbientLight(GREEN,new Double3(0.1)));
-        scene.geometries
+        Material glassMatetrial = new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr);
+        /*scene.geometries
                 .add(
                         new Triangle(A,B,C)
                                 .setEmission(RED) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr))
+                                .setMaterial(glassMatetrial)
                         ,new Triangle(C,B,D)
                                 .setEmission(GREEN) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr)),
+                                .setMaterial(glassMatetrial),
                         new Triangle(D,B,E)
                                 .setEmission(SKY) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr)),
+                                .setMaterial(glassMatetrial),
                         new Triangle(E,B,A)
                                 .setEmission(PURPALE) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr)),
+                                .setMaterial(glassMatetrial),
                         new Triangle(E,H,A)                                .
                                 setEmission(YELLOW) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr)),
+                                .setMaterial(glassMatetrial),
                         new Triangle(D,E,H)
                                 .setEmission(RED) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr)),
+                                .setMaterial(glassMatetrial),
                         new Triangle(H,C,D)
                                 .setEmission(SKY) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr)),
+                                .setMaterial(glassMatetrial),
                         new Triangle(H,A,C)
                                 .setEmission(PURPALE) //
-                                .setMaterial(new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr))
+                                .setMaterial(glassMatetrial)
 
-                );
-        scene.geometries
-                        .add(
-                                new Sphere(radius,F).
-                                        setEmission(sphereColor).setMaterial(new Material().setKd(KD).setKs(KS).setnShininess(SHININESS))
-                        );
+                );*/
+
+       /* scene.geometries
+                .add(
+                        new Sphere(radius,F).
+                                setEmission(sphereColor).setMaterial(new Material().setKd(KD).setKs(KS).setnShininess(SHININESS))
+                );*/
+        Diamond diamond= (Diamond) new Diamond(Point.ZERO,radius).setEmission(YELLOW).setMaterial(glassMatetrial);
+         Polygon table= (Polygon) new Polygon(radius,Point.ZERO,8).setMaterial(glassMatetrial).setEmission(YELLOW);
+        scene.geometries.add(
+                table
+
+        );
 
 
 
@@ -107,7 +113,7 @@ public class imageBuild {
         scene.setBackground(new Color(GRAY));
 
 
-        camera.setImageWriter(new ImageWriter("imageBuild", 500, 500)) //
+        camera.setImageWriter(new ImageWriter("imageBuild", 1000, 1000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();

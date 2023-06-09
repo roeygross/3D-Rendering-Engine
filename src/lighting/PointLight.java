@@ -4,9 +4,6 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
-/**
- * point light is a light that has a point that emits light and spans from it, for example, a bulb
- */
 public class PointLight extends Light implements LightSource{
     final private Point position;
     private double kC =1;
@@ -29,12 +26,7 @@ public class PointLight extends Light implements LightSource{
         return this;
     }
 
-    /**
-     * constructor for point light
-     * @param intensity - in the point
-     * @param position - point
-     */
-    protected PointLight(Color intensity,Point position) {
+    public PointLight(Color intensity, Point position) {
         super(intensity);
         this.position = position;
     }

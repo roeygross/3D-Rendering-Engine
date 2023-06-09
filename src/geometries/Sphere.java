@@ -69,4 +69,9 @@ public class Sphere extends RadialGeometry{
         //if (!isZero(point.distance(center)-radius))throw new IllegalArgumentException("Sphere- getNormal- the point is not inside the sphere");
         return point.subtract(center).normalize();
     }
+
+    @Override
+    public boolean isPointInside(Point point) {
+        return Util.isZero( center.distance(point)-radius);
+    }
 }
