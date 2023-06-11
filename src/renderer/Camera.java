@@ -23,8 +23,29 @@ public class Camera {
     double distance;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracerBasic;
-    AntiAliasing antiAliasing =AntiAliasing.NONE;
+    Point    focusTarget ;
 
+    public Camera setBlurIntensity(double blurIntensity) {
+        this.blurIntensity = blurIntensity;
+        return this;
+    }
+
+    double blurIntensity=1;
+
+    public Camera setDepth(double depth) {
+        this.depth = depth;
+        return this;
+    }
+
+    double depth;
+
+
+        AntiAliasing antiAliasing =AntiAliasing.NONE;
+
+    public Camera setAntiAliasing(AntiAliasing antiAliasing) {
+        this.antiAliasing = antiAliasing;
+        return this;
+    }
 
     public Camera setImageWriter(ImageWriter imageWriter) {
         this.imageWriter = imageWriter;
@@ -36,7 +57,13 @@ public class Camera {
         this.rayTracerBasic = rayTracer;
         return this;
     }
-    private Color castRay (int xIndex,int yIndex)
+
+    public Camera setFocusTarget(Point focusTarget) {
+        this.focusTarget = focusTarget;
+        return this;
+    }
+
+    private Color castRay (int xIndex, int yIndex)
     {
         try
         {
@@ -54,6 +81,10 @@ public class Camera {
                 {
                     return rayTracerBasic.traceBeamRay(constructRayBeamRandom(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()));
                 }
+                case DOF ->
+                {
+                    return rayTracerBasic.traceDOF(constructRay(imageWriter.getNx(), imageWriter.getNy(),xIndex,yIndex),constructRayBeamRandom(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()),focusTarget,depth,blurIntensity);
+                }
                 default ->
                 {
                     throw (new UnsupportedOperationException("one or more of the field is not inialized"));
@@ -65,7 +96,15 @@ public class Camera {
             throw (new UnsupportedOperationException("one or more of the field is not inialized"));
         }
     }
+    public Camera setAngle(double angle, Vector k) {
+
+        vto = vto.Roatate(angle, k).normalize();
+        vup = vup.Roatate(angle, k).normalize();
+        vright = vto.crossProduct(vup);
+        return this;
+    }
     /**/
+
     public Camera  renderImage()
     {
         try
@@ -111,10 +150,11 @@ public class Camera {
     public Camera(Point place, Vector vto, Vector vup) {
 
         this.place = place;
-        if (vto.dotProduct(vup) != 0) throw (new IllegalArgumentException("Vector is not orthogonal"));
+        if (Util.isZero(vto.dotProduct(vup))) throw (new IllegalArgumentException("Vector is not orthogonal"));
         this.vto = vto.normalize();
         this.vup = vup.normalize();
         this.vright = vto.crossProduct(vup).normalize();//orthogonal to vto and vup
+
     }
     public Camera setVPSize(double width, double height)
     {
@@ -157,9 +197,12 @@ public class Camera {
     {
 
         Point randomPoint = center;
-        double yi = -Math.floor(Math.random() *(radius - 0 + 1) + 0);//generate y coordinate from 0 to radius
+        //double yi = -Math.floor(Math.random() *(radius - 0 + 1) + 0);//generate y coordinate from 0 to radius
+        double yi = Util.random(-radius,radius);
         if (yi !=0 ) randomPoint = randomPoint.add(vup.scale(yi));
-        double xj = Math.floor(Math.random() *((radius-yi) - 0 + 1) + 0);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
+        double limit = Math.sqrt(radius * radius - yi * yi);
+        double xj = Util.random(-limit, limit);
+        //double xj = Math.floor(Math.random() *((radius-yi) - 0 + 1) + 0);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
         if (xj !=0 ) randomPoint = randomPoint.add(vright.scale(xj));
         return randomPoint;
     }
@@ -187,6 +230,7 @@ public class Camera {
     }
     public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
     {
+
         List<Ray> beam = new ArrayList<>();
         Point center = getCenterOfPixel(i,j,nX,nY, pixelHighet, pixelWidth);
         for (int i1=0;i1<gridHighet;i1++)
@@ -198,6 +242,7 @@ public class Camera {
         }
         return beam;
     }
+
     /*public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
     {
         List<Ray> beam = new ArrayList<>();

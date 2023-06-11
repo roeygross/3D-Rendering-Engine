@@ -4,6 +4,8 @@
 package rendererTests;
 
 import static java.awt.Color.*;
+import static renderer.AntiAliasing.DOF;
+import static renderer.AntiAliasing.Random;
 
 import org.junit.jupiter.api.Test;
 
@@ -82,7 +84,7 @@ public class ReflectionRefractionTests {
    @Test
    public void trianglesTransparentSphere() {
       Camera camera = new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0)) //
-         .setVPSize(200, 200).setVPDistance(1000);
+         .setVPSize(200, 200).setVPDistance(1000).setFocusTarget(new Point(0, 0, 0)).setAntiAliasing(DOF);
 
       scene.setAmbientLight(new AmbientLight(new Color(WHITE), 0.15));
 

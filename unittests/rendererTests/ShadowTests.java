@@ -39,7 +39,8 @@ public class ShadowTests {
    /** Produce a picture of a sphere and triangle with point light and shade */
    @Test
    public void sphereTriangleInitial() {
-      sphereTriangleHelper("shadowSphereTriangleInitial", //
+       camera.setAntiAliasing(AntiAliasing.DOF).setFocusTarget(new Point(-70, -40, 0)).setDepth(new Point(0, 0, -200).distance(camera.getPlace())- camera.getDistance()).setBlurIntensity(0.6);
+       sphereTriangleHelper("shadowSphereTriangleInitial", //
                            new Triangle(new Point(-70, -40, 0), new Point(-40, -70, 0), new Point(-68, -68, -4)), //
                            new Point(-100, -100, 200));
    }
