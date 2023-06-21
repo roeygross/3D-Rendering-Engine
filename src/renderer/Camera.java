@@ -1,6 +1,6 @@
 package renderer;
-import java.security.SecureRandom;
 
+import geometries.Plane;
 import primitives.*;
 import primitives.Vector;
 
@@ -23,24 +23,31 @@ public class Camera {
     double distance;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracerBasic;
-    Point    focusTarget ;
 
-    public Camera setBlurIntensity(double blurIntensity) {
-        this.blurIntensity = blurIntensity;
+    public Camera setAperture(double aperture) {
+        this.aperture = aperture;
         return this;
     }
 
-    double blurIntensity=1;
+    private double aperture = 0;
+    private  double DOFPlaneDistance = 100;
+    private int samples = 9;
+    private boolean DOF = false;
+    AntiAliasing antiAliasing =AntiAliasing.NONE;
+    Plane DOFPlane;
 
-    public Camera setDepth(double depth) {
-        this.depth = depth;
-        return this;
+    public Camera setDOF(boolean DOF) {
+        this.DOF = DOF;
+        return  this;
+
     }
 
-    double depth;
 
-
-        AntiAliasing antiAliasing =AntiAliasing.NONE;
+    public Camera setDOFPlaneDistance(double DOFPlaneDistance) {
+        this.DOFPlaneDistance = DOFPlaneDistance;
+        DOFPlane = new Plane(vto,place.add(vto.scale(distance+DOFPlaneDistance)));
+        return this;
+    }
 
     public Camera setAntiAliasing(AntiAliasing antiAliasing) {
         this.antiAliasing = antiAliasing;
@@ -57,39 +64,82 @@ public class Camera {
         this.rayTracerBasic = rayTracer;
         return this;
     }
+    private Point constructPixelPoint(int nX, int nY, int j, int i) {
+        double Ry = highet / nY;
+        double Rx = width / nX;
+        double yI = -(i - ((nY - 1) / 2.0)) * Ry;//how much to move on the plane in order to get to the j i index
+        double xJ = (j - ((nX - 1) / 2.0)) * Rx;
 
-    public Camera setFocusTarget(Point focusTarget) {
-        this.focusTarget = focusTarget;
-        return this;
+        Point centerOfPlane = place.add(vto.scale(distance));
+        Point pIJ = centerOfPlane;
+        if (xJ != 0) pIJ = pIJ.add(vright.scale(xJ));
+        if (yI != 0) pIJ = pIJ.add(vup.scale(yI));
+
+        return pIJ;
     }
+    /*get the index of a pixel and return a grid with ray's po */
+    private List<Point> getGridDOF(int xIndex, int yIndex, int nx, int ny) {
+        Point pixelCenter = constructPixelPoint(nx,ny,xIndex,yIndex);
+        if (Util.isZero(aperture)) return List.of(pixelCenter);
+        List<Point> targetArea = new LinkedList<>();
+        Point leftCorner = pixelCenter.add(vup.scale(aperture / 2)).add(vright.scale(-aperture / 2));
+        Point current = leftCorner;
+        for (int i = 0; i < samples; ++i)
+        {
+            if (i != 0)
+                current = leftCorner.add(vup.scale(-aperture * i / samples));
+            for (int j = 0; j < samples; ++j) {
+                targetArea.add(current);
+                current = current.add(vright.scale(aperture / samples));
+            }
+        }
+        return targetArea;
+    }
+
 
     private Color castRay (int xIndex, int yIndex)
     {
         try
         {
-            switch (antiAliasing)
-            {
+            switch (antiAliasing) {
                 case NONE -> {
-                    return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex,yIndex));
+                    return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex, yIndex));
 
                 }
-                case GRID ->
-                {
-                    return rayTracerBasic.traceBeamRay(constructRayBeam(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()));
+                case GRID -> {
+                    return rayTracerBasic.traceBeamRay(constructRayBeam(yIndex, xIndex, imageWriter.getNx(), imageWriter.getNy(), samples, samples, highet / imageWriter.getNy(), width / imageWriter.getNx()));
                 }
-                case Random ->
-                {
-                    return rayTracerBasic.traceBeamRay(constructRayBeamRandom(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()));
+                case Random -> {
+                    return rayTracerBasic.traceBeamRay(constructRayBeamRandom(yIndex, xIndex, imageWriter.getNx(), imageWriter.getNy(), samples, samples, highet / imageWriter.getNy(), width / imageWriter.getNx()));
                 }
-                case DOF ->
-                {
-                    return rayTracerBasic.traceDOF(constructRay(imageWriter.getNx(), imageWriter.getNy(),xIndex,yIndex),constructRayBeamRandom(yIndex,xIndex, imageWriter.getNx(),  imageWriter.getNy(), 10,10, highet / imageWriter.getNy(), width / imageWriter.getNx()),focusTarget,depth,blurIntensity);
+                case DOF -> {
+                    Ray mainRay = constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex, yIndex);
+                    if (aperture == 0) {
+                        return rayTracerBasic.traceRay(mainRay);
+                    }
+                    Point focalPoint = DOFPlane.findIntersections(mainRay).get(0);
+                    List<Point> gridPoints = getGridDOF(xIndex, yIndex, imageWriter.getNx(), imageWriter.getNy());
+                    List<Ray> DOFBeam = Ray.generateRayBeamToPoint(gridPoints, focalPoint);
+                    //List<Ray> DOFBeam = constructDOFBeam(xIndex,yIndex, imageWriter.getNx(), imageWriter.getNy(),focalPoint);
+                    DOFBeam.add(mainRay);
+                    Color color = rayTracerBasic.traceBeamRay(DOFBeam);
+                    Color color1=Color.BLACK;
+                    Color mainColor = rayTracerBasic.traceRay(mainRay);
+                    for (Ray ray:
+                         DOFBeam) {
+                        Color tmp = rayTracerBasic.traceRay(ray);
+                        color1= color1.add(tmp);
+                    }
+                    int k = samples * samples + 1;
+                    color1 = color1.reduce(k);
+                    return  color1;
                 }
-                default ->
-                {
+
+                default -> {
                     throw (new UnsupportedOperationException("one or more of the field is not inialized"));
                 }
             }
+
         }
         catch (MissingResourceException missingResourceException)
         {
@@ -128,6 +178,7 @@ public class Camera {
 
 
     }
+
     /*gets color and interval and paint a grid upon the image*/
     public void printGrid(int interval,Color color)
     {
@@ -150,7 +201,7 @@ public class Camera {
     public Camera(Point place, Vector vto, Vector vup) {
 
         this.place = place;
-        if (Util.isZero(vto.dotProduct(vup))) throw (new IllegalArgumentException("Vector is not orthogonal"));
+        if (!Util.isZero(vto.dotProduct(vup))) throw (new IllegalArgumentException("Vector is not orthogonal"));
         this.vto = vto.normalize();
         this.vup = vup.normalize();
         this.vright = vto.crossProduct(vup).normalize();//orthogonal to vto and vup
@@ -206,15 +257,6 @@ public class Camera {
         if (xj !=0 ) randomPoint = randomPoint.add(vright.scale(xj));
         return randomPoint;
     }
-    /*private Ray constructRayInPixelRandom(Point center,double radius)
-    {
-        Point randomPoint = center;
-        double yi = -Math.floor(Math.random() *(radius - 0 + 1) + 0);//generate y coordinate from 0 to radius
-        if (yi !=0 ) randomPoint = randomPoint.add(vup.scale(yi));
-        double xj = Math.floor(Math.random() *((radius-yi) - 0 + 1) + 0);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
-        if (xj !=0 ) randomPoint = randomPoint.add(vright.scale(xj));
-        return new Ray(place,randomPoint.subtract(place));
-    }*/
     public List<Ray> constructRayBeam(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
     {
         List<Ray> beam = new ArrayList<>();
@@ -242,54 +284,6 @@ public class Camera {
         }
         return beam;
     }
-
-    /*public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int gridWidth, int gridHighet, double pixelHighet, double pixelWidth)
-    {
-        List<Ray> beam = new ArrayList<>();
-        Point center = getCenterOfPixel(i,j,nX,nY, pixelHighet, pixelWidth);
-        for (int i1=0;i1<gridHighet;i1++)
-        {
-            for (int j1=0;j1<gridWidth;j1++)
-            {
-                beam.add(constructRayInPixel(nX, nY,j1,i1,center,gridWidth,gridHighet));
-            }
-        }
-        return beam;
-    }*/
-    /*public List<Ray> constructRayBeamRandomDisk(int i, int j, int nX, int nY,int numOfRaysInBeam) {
-        List<Ray> beam = new ArrayList<>();
-        double pixelHighet = highet / nY;
-        double pixelWidth = width / nX;
-        Point center = getPlace().add(vto.scale(distance));
-        double yi = -(i - ((double) nY - 1) / 2) * pixelHighet;
-        if (yi != 0) center = center.add(vup.scale(yi));
-        double xj = (j - ((double) nX - 1) / 2) * pixelWidth;
-        if (xj != 0) center = center.add(vright.scale(xj));//the center of i j pixel
-        double radius = Math.sqrt(pixelHighet * pixelHighet + pixelWidth * pixelWidth);
-        double radiusDisk =radius/numOfRaysInBeam;
-        Ray randomRay = new Ray(place,generateRandomPoint(center,radiusDisk).subtract(place));
-        beam.add(randomRay);
-        for (int i1=0;i1<numOfRaysInBeam;i1++)
-        {
-            boolean goodPoint = true;
-            Point randomPoint = generateRandomPoint(center,radius);
-            for (Ray randomRayInArray:
-                 beam) {
-                if (randomRayInArray.distance(randomPoint)<radiusDisk)
-                {
-                    goodPoint = false;
-                    break;
-                }
-
-            }
-            if (goodPoint)
-            {
-                beam.add(new Ray(place,randomPoint.subtract(place)));
-            }
-        }
-        return  beam;
-    }*/
-
     public Point getCenterOfPixel(int i, int j, int nX,int nY,double pixelHighet,double pixelWidth)
     {
         Point center = getPlace().add(vto.scale(distance));
@@ -299,31 +293,6 @@ public class Camera {
         if (xj !=0 ) center = center.add(vright.scale(xj));
         return center;
     }
-    /*public List<Ray> constructRayBeamRandom(int i, int j, int nX, int nY, int numOfRaysInBeam, double pixelHighet, double pixelWidth)
-    {
-        List<Ray> beam = new ArrayList<>();
-        Point center = getCenterOfPixel(i,j,nX,nY,pixelHighet, pixelWidth);
-        //double radius = Math.sqrt(pixelHighet*pixelHighet+ pixelWidth* pixelWidth);
-        double radius =Math.min(pixelHighet, pixelWidth)/2;
-        double yRandom;
-        double xRandom;
-        Point randomPoint;
-        SecureRandom random = new SecureRandom();
-        SecureRandom randomS = new SecureRandom();
-        double yLimit = pixelHighet/2;
-        double xLimit = pixelWidth /2;
-        for (int rayCounter=0;rayCounter<numOfRaysInBeam;rayCounter++)
-        {
-             randomPoint = center;
-             //yRandom = -yLimit + (yLimit+ yLimit) * random.nextDouble();
-            yRandom = randomS.nextDouble(-yLimit,yLimit);
-            if (!Util.isZero(yRandom) ) randomPoint = randomPoint.add(vup.scale(yRandom));
-             xRandom =randomS.nextDouble(-xLimit,xLimit);//generate x coordinate from 0 to radius-y cordinate so the sum of the distance from the center in absoolute do not be greater then radius
-            if (!Util.isZero(xRandom) ) randomPoint = center = center.add(vright.scale(xRandom));
-            beam.add(new Ray(place,randomPoint.subtract(place)));
-        };
-        return beam;
-    }*/
     public Point getPlace() {
         return place;
     }
@@ -351,46 +320,34 @@ public class Camera {
     public double getDistance() {
         return distance;
     }
-    /*spinnig function cant get 90 angle or any multipltion or it.*/
-    public Camera spinX(double angle)//the functino use vector spin to change the diraction
+    public  Camera(Point newPosition, Point target)
     {
+        cameraPosition(newPosition,target,0);
+    }
+    public Camera cameraPosition(Point newPosition, Point target, double angle) {
+        place = newPosition;
+        vto = target.subtract(newPosition).normalize();
+        try {
+            vright = vto.crossProduct(Vector.Y).normalize();
+            vup = vto.crossProduct(vright).normalize();
 
-        vto = vto.spinX(angle);
-
-        vright = vto.crossProduct(vup);
+        } catch (IllegalArgumentException e) {
+            vup = Vector.Z;
+            vright = vto.crossProduct(vup).normalize();
+        }
+        return angle == 0 ? this : rotateCamera(angle);
+    }
+    public Camera rotateCamera(double angle) {
+        angle = Math.toRadians(angle);
+        vup = vup.vectorRotate(vto, angle);
+        vright = vup.crossProduct(vto).normalize();
         return this;
     }
-    public Camera rotateAroundPointRight(double angle, Point center )
+    public Camera switchUpRight()
     {
-        double d = center.distance(place);
-        double radian = Math.toRadians(angle);
-        place = place.add(new Point(-d*Math.sin(radian),-d+d*Math.cos(radian),0));
-        vto =  center.subtract(place).normalize();
-        vright = vto.crossProduct(vup);
-
-        return this;
-    }
-    public Camera rotateAroundPointUP(double angle, Point center )
-    {
-        double d = center.distance(place);
-        double radian = Math.toRadians(angle);
-        place = place.add(new Point(0,-d*Math.sin(radian),-d+d*Math.cos(radian)));
-        vto =  center.subtract(place).normalize();
-        vup = vright.crossProduct(vto);
-
-        return this;
-    }
-
-    public Camera spinY(double angle)//the functino use vector spin to change the diraction
-    {
-        vto = vto.spinY(angle);
-        vup = vright.crossProduct(vto);
-        return this;
-    }
-    public Camera spinZ(double angle)//the functino use vector spin to change the diraction
-    {
-        vto = vto.spinZ(angle);
-        vup = vright.crossProduct(vto);
+        Vector tmp = vright;
+        vright = vup;
+        vup = tmp;
         return this;
     }
 

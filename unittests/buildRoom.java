@@ -39,10 +39,11 @@ public class buildRoom {
         scene.lights.add(
                 new DirectionalLight(new Color(100,100,100),new Vector(-1.012534429138574, -3.682651905023338, -2))
         );
-        Point cameraPosition = new Point(1, -3, 1);
+        Point cameraPosition = new Point(-9, 5, 2);
         Vector cameraDirectionTo =new Point(1,0,1).subtract(cameraPosition);
         Vector cameraDirectionUp = cameraDirectionTo.Roatate(90,new Vector(0,0,1));
-        Camera camera = new Camera(cameraPosition, cameraDirectionTo, cameraDirectionUp) //
+
+        Camera camera = new Camera(cameraPosition, new Point(0,0,-1)).switchUpRight() //
                 .setVPSize(200, 200).setVPDistance(1000).setAngle(10,new Vector(0,-1,0));
         Point A=new Point(0,0,0),
                 B= new Point(-3,0,0),
@@ -91,10 +92,8 @@ public class buildRoom {
         scene.lights.add(
                 new PointLight(new Color(0.1,0.1,0.1),new Point(-0.5,3.5,2))
         );
-        scene.lights.add(
-                new DirectionalLight(new Color(0.01,0.01,0.01),new Vector(1,-1,-1))
-        );
-        camera.setImageWriter(new ImageWriter("roomImage", 100, 100)) //
+
+        camera.setImageWriter(new ImageWriter("roomImage", 500, 500)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();

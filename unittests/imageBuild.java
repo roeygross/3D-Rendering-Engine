@@ -51,7 +51,7 @@ public class imageBuild {
                 H = new Point(0,0,-100);
         double radius= F.distance(G)/2;
         Camera camera = new Camera(new Point(2000,2000,0), new Vector(0,1,0), new Vector(0, 0, 1)) //
-                .setVPSize(150, 150).setVPDistance(1000).rotateAroundPointRight(20,F).rotateAroundPointUP(20,F);
+                .setVPSize(150, 150).setVPDistance(1000);
         double kt = 0.15;
         double kd = 0.3;
         double ks = 0.3;

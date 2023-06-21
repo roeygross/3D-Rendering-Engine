@@ -208,17 +208,7 @@ public class RayTracerBasic extends RayTracerBase {
         }
         return tmp.reduce(beam.size());
     }
-    @Override
-    public Color traceDOF(Ray mainRay,List<Ray> secondaryRays, Point focusTarget,double depth,double blurIntensity ) {
-        Color color = traceRay(mainRay);
-        for (Ray secondaryRay :
-             secondaryRays) {
-            GeoPoint closestPoint = findClosestIntersection(secondaryRay);
-            if (closestPoint!=null)color = color.add(traceRay(secondaryRay).scale(Math.abs(1-Math.abs(focusTarget.distance(closestPoint.point)/(depth*blurIntensity)))));
-        }
-        color = color.reduce(secondaryRays.size()+1);
-        return color;
-    }
+
 
 }
 

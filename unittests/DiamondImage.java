@@ -43,7 +43,7 @@ public class DiamondImage {
 
 
         Camera camera = new Camera(new Point(20, 0, 0), new Vector(-1, 0, 0), new Vector(0, 0, 1)) //
-                .setVPSize(200, 200).setVPDistance(1000).rotateAroundPointRight(360, Point.ZERO).rotateAroundPointUP(0, Point.ZERO);
+                .setVPSize(200, 200).setVPDistance(1000);
         double kt = 0.01;
         double kd = 0.4;
         double ks = 0.4;

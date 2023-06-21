@@ -63,52 +63,6 @@ class CameraTest {
 	/**
 	 * test for spinning the camera right and left
 	 */
-	@Test
-	void spinX() // test checks that all the vectors diraction are orthogonal to each othe
-	{
-		Camera camera = new Camera(Point.ZERO,new Vector(1,0,0),new Vector(0,0,1));
-		camera.setVPDistance(2);
-		camera.spinX(30);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVup())==0,
-				"spinRight camera vectors are wrong"
-		);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVright())==0,
-				"spinRight camera vectors are wrong"
-		);
-
-	}
-	void spinY() // test checks that all the vectors diraction are orthogonal to each othe
-	{
-		Camera camera = new Camera(Point.ZERO,new Vector(1,0,0),new Vector(0,0,1));
-		camera.setVPDistance(2);
-		camera.spinY(30);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVup())==0,
-				"spinRight camera vectors are wrong"
-		);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVright())==0,
-				"spinRight camera vectors are wrong"
-		);
-
-	}
-	void spinZ() // test checks that all the vectors diraction are orthogonal to each othe
-	{
-		Camera camera = new Camera(Point.ZERO,new Vector(1,0,0),new Vector(0,0,1));
-		camera.setVPDistance(2);
-		camera.spinZ(30);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVup())==0,
-				"spinRight camera vectors are wrong"
-		);
-		assertTrue(
-				camera.getVto().dotProduct(camera.getVright())==0,
-				"spinRight camera vectors are wrong"
-		);
-
-	}
 
 	/**
 	 * Test method for {@link .${CLASS_NAME}.Name(.${CLASS_NAME})}.

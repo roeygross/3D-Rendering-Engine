@@ -6,7 +6,9 @@ import static java.lang.Math.sqrt;
  * @author roeygross
  */
 public class  Vector  extends Point {
-
+    public static Vector X  =new Vector(1,0,0);
+    public static Vector Y = new Vector(0,1,0);
+    public static Vector Z = new Vector( 0,0,1);
 
     /**
      * Vector constructions by the Double3 constructor
