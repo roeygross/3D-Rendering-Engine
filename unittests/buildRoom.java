@@ -39,12 +39,10 @@ public class buildRoom {
         scene.lights.add(
                 new DirectionalLight(new Color(100,100,100),new Vector(-1.012534429138574, -3.682651905023338, -2))
         );
-        Point cameraPosition = new Point(-9, 5, 2);
-        Vector cameraDirectionTo =new Point(1,0,1).subtract(cameraPosition);
-        Vector cameraDirectionUp = cameraDirectionTo.Roatate(90,new Vector(0,0,1));
+        Point cameraPosition = new Point(-900, 500, 200);
 
         Camera camera = new Camera(cameraPosition, new Point(0,0,-1)).switchUpRight() //
-                .setVPSize(200, 200).setVPDistance(1000).setAngle(10,new Vector(0,-1,0));
+                .setVPSize(200, 200).setVPDistance(100).setAngle(10,new Vector(0,-1,0));
         Point A=new Point(0,0,0),
                 B= new Point(-3,0,0),
                 C= new Point(0,2,0),
@@ -73,11 +71,13 @@ public class buildRoom {
         Material WOODMETIRIAL = new Material().setKs(0.1).setKd(0.1).setnShininess(1);
         scene.geometries.add(
                 new Floor (new Point(0, 0, 0), new Vector(0, 0, 1), new Vector(-1, 0, 0),
-                        PURPALE, SKY, 4, 4, 10, 10,new Material()).getElements()
+                        PURPALE, SKY, 500, 1000, 10, 10,new Material()).getElements()
     ,new Floor (new Point(0, 0, 0), new Vector(0, 0, 1), new Vector(0, 1, 0),
-                       PURPALE, SKY, 4, 4, 10, 10,new Material()).getElements()
+                       PURPALE, SKY, 500, 1000, 10, 10,new Material()).getElements()
                 ,new Floor (new Point(0, 0, 0), new Vector(-1, 0, 0), new Vector(0, 1, 0),
-                        YELLOW, LIGHTGRAY, 4, 4, 10, 10,new Material().setkR(0.01).setKs(0.1).setKd(0.1).setnShininess(2)).getElements()
+                        YELLOW, LIGHTGRAY, 1000, 1000, 10, 10,new Material().setkR(0.01).setKs(0.1).setKd(0.1).setnShininess(2)).getElements()
+                ,new Floor (new Point(0, 0, 500), new Vector(-1, 0, 0), new Vector(0, 1, 0),
+                        GRAY, GRAY, 1000, 1000, 10, 10,new Material().setkR(0.01).setKs(0.1).setKd(0.1).setnShininess(2)).getElements()
                 ,new Table(0.5,0.25, WOODCOLOR,new Point(-0.5,0.5,0),new Vector(0,0,1),new Vector(0,0,1)).setMaterialBars(WOODMETIRIAL).setMaterialBase(WOODMETIRIAL).setMaterialLeg(WOODMETIRIAL).setMaterialSurfaceBase(WOODMETIRIAL).setMaterialSurfaceTop(WOODMETIRIAL).getElements()
                 ,new Table(0.5,0.25, WOODCOLOR,new Point(-1,0.5,0),new Vector(0,0,1),new Vector(0,0,1)).setMaterialBars(WOODMETIRIAL).setMaterialBase(WOODMETIRIAL).setMaterialLeg(WOODMETIRIAL).setMaterialSurfaceBase(WOODMETIRIAL).setMaterialSurfaceTop(WOODMETIRIAL).getElements()
                 ,new Table(0.5,0.25, WOODCOLOR,new Point(-1.5,0.5,0),new Vector(0,0,1),new Vector(0,0,1)).setMaterialBars(WOODMETIRIAL).setMaterialBase(WOODMETIRIAL).setMaterialLeg(WOODMETIRIAL).setMaterialSurfaceBase(WOODMETIRIAL).setMaterialSurfaceTop(WOODMETIRIAL).getElements()
@@ -85,15 +85,16 @@ public class buildRoom {
                         ,new Vector(0,-1,0),new Vector(1,0,0),WOODCOLOR,true).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).setSeatMaterial(WOODMETIRIAL).setSeatCoverMaterial(WOODMETIRIAL).setBrCoverMaterial(WOODMETIRIAL).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).getGeometries()
                 ,new Chair(new Point(-1.1,1.45,1),0.2,0.4,0.005,0.03,0.01,0.01
                         ,new Vector(0,-1,0),new Vector(1,0,0),WOODCOLOR,true).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).setSeatMaterial(WOODMETIRIAL).setSeatCoverMaterial(WOODMETIRIAL).setBrCoverMaterial(WOODMETIRIAL).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).getGeometries()
-                ,new Floor(new Point(-0.1,0.1,0.2),new Vector(-1,0,0),new Vector(0,0,1),Color.BLACK,Color.BLACK,1.5,1.5,8,20,new Material().setkR(0.5).setKs(0.3).setKd(0.3)).getElements()
-                ,new Floor(new Point(-0.1,0.1,0.2),new Vector(0,1,0),new Vector(0,0,1),Color.BLACK,Color.BLACK,1.5,1.5,8,20,new Material().setkR(0.5).setKs(0.3).setKd(0.3)).getElements()
+                ,new Floor(new Point(-0.1,0.1,0.2),new Vector(-1,0,0),new Vector(0,0,1),Color.BLACK,Color.BLACK,3,1,1,1,new Material().setkR(0.5).setKs(0.3).setKd(0.3)).getElements()
+                ,new Floor(new Point(-0.1,0.1,0.2),new Vector(0,1,0),new Vector(0,0,1),Color.BLACK,Color.BLACK,3,1,1,1,new Material().setkR(0.5).setKs(0.3).setKd(0.3)).getElements()
 
         );
         scene.lights.add(
                 new PointLight(new Color(0.1,0.1,0.1),new Point(-0.5,3.5,2))
         );
+        camera.setAperture(0.1);
 
-        camera.setImageWriter(new ImageWriter("roomImage", 500, 500)) //
+        camera.setImageWriter(new ImageWriter("roomImage", 100, 100)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
