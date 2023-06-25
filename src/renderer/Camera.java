@@ -3,8 +3,7 @@ package renderer;
 import geometries.Plane;
 import primitives.*;
 import primitives.Vector;
-
-
+import java.util.stream.*;
 import java.util.*;
 
 /*
@@ -23,6 +22,21 @@ public class Camera {
     double distance;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracerBasic;
+    /*threading 2 variubles*/
+    private  double intervalThread =0;
+    private double threads = 1;
+
+    public Camera setThreads(double threads) {
+        this.threads = threads;
+        return this;
+    }
+
+
+    public Camera setintervalThread(double intervalThread)
+    {
+        this.intervalThread = intervalThread;
+        return this;
+    }
 
     public Camera setAperture(double aperture) {
         this.aperture = aperture;
@@ -31,9 +45,9 @@ public class Camera {
 
     private double aperture = 0;
     private  double DOFPlaneDistance = 100;
-    private int samples = 9;
+    private int samples = 5;
     private boolean DOF = false;
-    AntiAliasing antiAliasing =AntiAliasing.NONE;
+    AntiAliasing antiAliasing =AntiAliasing.DOF;
     Plane DOFPlane;
 
     public Camera setDOF(boolean DOF) {
@@ -99,8 +113,6 @@ public class Camera {
 
     private Color castRay (int xIndex, int yIndex)
     {
-        try
-        {
             switch (antiAliasing) {
                 case NONE -> {
                     return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex, yIndex));
@@ -139,12 +151,6 @@ public class Camera {
                     throw (new UnsupportedOperationException("one or more of the field is not inialized"));
                 }
             }
-
-        }
-        catch (MissingResourceException missingResourceException)
-        {
-            throw (new UnsupportedOperationException("one or more of the field is not inialized"));
-        }
     }
     public Camera setAngle(double angle, Vector k) {
 
@@ -157,46 +163,49 @@ public class Camera {
 
     public Camera  renderImage()
     {
-        try
-        {
+        if (imageWriter==null) throw (new IllegalArgumentException("image writer had not been inatilized"));
             int nX = imageWriter.getNx();
             int ny = imageWriter.getNy();
-            for (int i=0;i<ny;++i)
+            if (threads==1)
             {
-                for (int q=0;q<nX;q++)
+                for (int i=0;i<ny;++i)
                 {
-                    Color color = castRay(q, i);
-                    imageWriter.writePixel(q,i, color);
+                    for (int q=0;q<nX;q++)
+                    {
+                        Color color = castRay(q, i);
+                        imageWriter.writePixel(q,i, color);
+                    }
                 }
+                return this;
             }
+            Pixel.initialize(ny,nX,intervalThread);
+            while (threads-- > 0 )
+            {
+                new Thread(()->{
+                    for (Pixel pixel= new Pixel(); pixel.nextPixel();Pixel.pixelDone())
+                    {
+                        int col = pixel.col;
+                        int row = pixel.row;
+                        imageWriter.writePixel(col, row,castRay(col, row));
+                    }
+                }).start();
+            }
+            Pixel.waitToFinish();
             return this;
-        }
-        catch (MissingResourceException e)//unvaild varibles
-        {
-            throw (new UnsupportedOperationException("one or more of the field is not inialized"));
-        }
-
-
     }
 
     /*gets color and interval and paint a grid upon the image*/
-    public void printGrid(int interval,Color color)
+    public Camera printGrid(int interval,Color color)
     {
         imageWriter.printGrid(interval,color);
+        return this;
     }
     /*create image from the information*/
     public void writeToImage()
     {
-        try
-        {
-            imageWriter.writeToImage();
-        }
-        catch (MissingResourceException missingResourceException)
-        {
-            throw (new UnsupportedOperationException("one or more of the field is not inialized"));
-
-        }
-
+        if (imageWriter == null)
+            throw new MissingResourceException("image writer is not initialized", ImageWriter.class.getName(), "");
+        imageWriter.writeToImage();
     }
     public Camera(Point place, Vector vto, Vector vup) {
 
