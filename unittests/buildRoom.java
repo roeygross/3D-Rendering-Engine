@@ -302,8 +302,8 @@ public class buildRoom {
                 .setSamples(8)
                 .setDOFPlaneDistance(cameraPosition.distance(candlePoint))
                 .setAperture(5)
-                .setThreads(3).setintervalThread(0.1);
-        camera.setImageWriter(new ImageWriter("romanticImage", 300, 300)) //
+                .setThreads(1).setintervalThread(0.1);
+        camera.setImageWriter(new ImageWriter("romanticImage", 100, 100)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
