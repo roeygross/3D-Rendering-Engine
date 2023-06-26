@@ -5,6 +5,7 @@ import geometries.Triangle;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.PointLight;
+import lighting.SpotLight;
 import org.junit.jupiter.api.Test;
 import primitives.*;
 import renderer.AntiAliasing;
@@ -16,19 +17,21 @@ import scene.Scene;
 public class buildRoom {
     Scene scene = new Scene("buildRoomimage");
     Color SKY = new Color(115,235,249);
-    Color LIGHTGRAY = new Color(java.awt.Color.LIGHT_GRAY);
-    Color WHITE = new Color(java.awt.Color.WHITE);
+    Color WOODCOLOR = new Color(133, 94, 66).reduce(1.5);
+    Color DARKWOODCOLOR = new Color(77, 38, 0).reduce(1.5);
+    Color LIGHTGRAY = new Color(java.awt.Color.LIGHT_GRAY).reduce(1.5);
+    Color WHITE = new Color(java.awt.Color.WHITE).reduce(1.5);
     Color BLACK = new Color(java.awt.Color.BLACK);
 
-    Color RED = new Color(255,0,0);
+    Color RED = new Color(255,0,0).reduce(1.5);
     Color ORANGE = new Color(255, 102, 0);
-    Color GRAY = new Color(java.awt.Color.gray);
-    Color DARKBLUE = new Color(0, 0, 102);
-    Color PURPALE = new Color(67,2,125);
+    Color GRAY = new Color(java.awt.Color.gray).reduce(1.5);
+    Color DARKBLUE = new Color(0, 0, 102).reduce(1.5);
+    Color PURPALE = new Color(67,2,125).reduce(1.5);
     Color phooksia = new Color(244,108,255);
     Color GREEN = new Color(0,255,0);
-    Color YELLOW = new Color(255,255,0);
-    Color LIGHTYELLOW = new Color(255,255,204);
+    Color YELLOW = new Color(255,255,0).reduce(1.5);
+    Color LIGHTYELLOW = new Color(255,255,204).reduce(1.5);
     double kt = 0.15;
     double kd = 0.3;
     double ks = 0.3;
@@ -158,7 +161,6 @@ public class buildRoom {
         scene.lights.add(
                 new PointLight(new Color(0.1,0.1,0.1),new Point(-0.5,3.5,2))
         );
-        camera.setAntiAliasing(AntiAliasing.NONE);
         camera.setImageWriter(new ImageWriter("allRoom", 200, 200)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
@@ -166,20 +168,16 @@ public class buildRoom {
 
     }
     @Test
-    void withoutDOFoneTable() {
+    void romantic() {
         double kt = 0.001;
         double kd = 1;
         double ks = 1;
         double kr = 0.001;
-        scene.setAmbientLight(new AmbientLight(GREEN, new Double3(0.1)));
         Material glassMatetrial = new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr);
-        scene.lights.add(
-                new DirectionalLight(new Color(100, 100, 100), new Vector(-1.012534429138574, -3.682651905023338, -2))
-        );
         Point cameraPosition = new Point(-400, 400, 230);
 
         Camera camera = new Camera(cameraPosition, new Point(0, 0, 150)).switchUpRight() //
-                .setVPSize(200, 200).setVPDistance(100).setAngle(10, new Vector(0, -1, 0)).setDOFPlaneDistance(100);
+                .setVPSize(200, 200).setVPDistance(100).setAngle(10, new Vector(0, -1, 0));
         Point A = new Point(0, 0, 0),
                 B = new Point(-3, 0, 0),
                 C = new Point(0, 2, 0),
@@ -204,9 +202,9 @@ public class buildRoom {
 
 
         );*/
-        Color WOODCOLOR = new Color(133, 94, 66);
-        Color DARKWOODCOLOR = new Color(77, 38, 0);
+
         Material WOODMETIRIAL = new Material().setKs(0.5).setKd(0.5).setnShininess(3);
+        Point candlePoint = new Point(-1280, 700, 195);
         scene.geometries.add(
                 //walls
                 new Floor(new Point(0, 0, 0), new Vector(0, 0, 1), new Vector(-1, 0, 0),
@@ -233,8 +231,8 @@ public class buildRoom {
                 , new Chair(new Point(-100, 100, 100), 100, 200, 2.5, 15, 5, 5
                         , new Vector(0, 1, 0), new Vector(-1, 0, 0), WOODCOLOR, true).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).setSeatMaterial(WOODMETIRIAL).setSeatCoverMaterial(WOODMETIRIAL).setBrCoverMaterial(WOODMETIRIAL).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).getGeometries()
                 //candle back
-                , new Cylinder(new Ray(new Point(-100, 200, 160), new Vector(0, 0, 1)), 10, 35).setEmission(LIGHTYELLOW)
-                , new Sphere(7, new Point(-100, 200, 195)).setEmission(ORANGE)
+                , new Cylinder(new Ray(new Point(-100, 200, 160), new Vector(0, 0, 1)), 10, 35).setEmission(LIGHTYELLOW).setMaterial(new Material().setnShininess(10).setKd(1).setKs(1))
+                , new Sphere(7, new Point(-100, 200, 195)).setEmission(ORANGE).setMaterial(new Material().setnShininess(10).setKd(1).setKs(1).setkT(0.3))
                 //A3,4 Tables and chairs
                 , new Table(160, 60, DARKWOODCOLOR, new Point(-600, 600, 0), new Vector(0, 0, 1), new Vector(1, 0, 0)).setMaterialBars(WOODMETIRIAL).setMaterialBase(WOODMETIRIAL).setMaterialLeg(WOODMETIRIAL).setMaterialSurfaceBase(WOODMETIRIAL).setMaterialSurfaceTop(WOODMETIRIAL).getElements()
                 , new Table(160, 60, DARKWOODCOLOR, new Point(-600, 200, 0), new Vector(0, 0, 1), new Vector(1, 0, 0)).setMaterialBars(WOODMETIRIAL).setMaterialBase(WOODMETIRIAL).setMaterialLeg(WOODMETIRIAL).setMaterialSurfaceBase(WOODMETIRIAL).setMaterialSurfaceTop(WOODMETIRIAL).getElements()
@@ -275,11 +273,11 @@ public class buildRoom {
                 , new Chair(new Point(-1300, 600, 100), 100, 160, 2.5, 15, 5, 5
                         , new Vector(0, 1, 0), new Vector(-1, 0, 0), WOODCOLOR, true).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).setSeatMaterial(WOODMETIRIAL).setSeatCoverMaterial(WOODMETIRIAL).setBrCoverMaterial(WOODMETIRIAL).setLegsMaterial(WOODMETIRIAL).setBarsMaterial(WOODMETIRIAL).getGeometries()
                 //candle front
-                , new Cylinder(new Ray(new Point(-1280, 700, 160), new Vector(0, 0, 1)), 10, 35).setEmission(LIGHTYELLOW)
-                , new Sphere(7, new Point(-1280, 700, 195)).setEmission(ORANGE)
+                , new Cylinder(new Ray(new Point(-1280, 700, 160), new Vector(0, 0, 1)), 10, 35).setEmission(LIGHTYELLOW).setMaterial(new Material().setnShininess(100).setKs(1).setKd(1).setkT(0.6))
+                , new Sphere(7, candlePoint).setEmission(ORANGE).setMaterial(new Material().setnShininess(100).setKs(1).setKd(1).setkT(0.6))
                 //mirrors
-                , new Floor(new Point(-0.1, 0.1, 100), new Vector(-1, 0, 0), new Vector(0, 0, 1), Color.BLACK, Color.BLACK, 2000, 200, 1, 1, new Material().setkR(0.5).setKs(0.3).setKd(0.3)).getElements()
-                , new Floor(new Point(-0.1, 0.1, 100), new Vector(0, 1, 0), new Vector(0, 0, 1), Color.BLACK, Color.BLACK, 2000, 200, 1, 1, new Material().setkR(0.5).setKs(0.3).setKd(0.3)).getElements()
+                , new Floor(new Point(-0.1, 0.1, 100), new Vector(-1, 0, 0), new Vector(0, 0, 1), Color.BLACK, Color.BLACK, 2000, 200, 1, 1, new Material().setkR(0.3).setKs(0.3).setKd(0.5)).getElements()
+                , new Floor(new Point(-0.1, 0.1, 100), new Vector(0, 1, 0), new Vector(0, 0, 1), Color.BLACK, Color.BLACK, 2000, 200, 1, 1, new Material().setkR(0.3).setKs(0.3).setKd(0.5)).getElements()
                 //little wall in middle
                 , new Floor(new Point(-900, 0, 0), new Vector(0, 0, 1), new Vector(0, 1, 0),
                         GRAY, LIGHTGRAY, 125, 1200, 15, 15, new Material().setKd(0.2).setKs(0.2).setkT(0.4)).getElements()
@@ -292,10 +290,20 @@ public class buildRoom {
 
         );
         scene.lights.add(
-                new PointLight(new Color(0.1, 0.1, 0.1), new Point(-0.5, 3.5, 2))
+                new PointLight(new Color(100,100,100), candlePoint)
         );
-        camera.setAntiAliasing(AntiAliasing.NONE);
-        camera.setImageWriter(new ImageWriter("roomImage", 200, 200)) //
+        scene.lights.add(
+                new SpotLight(new Color(250,250,500), candlePoint.add(new Point(0,0,40)),Vector.Z.scale(-1)).setNarrowBeam(1000000000)
+        );
+
+        camera
+                .setAntiAliasing(AntiAliasing.DOF)
+                .setAdaptiveSuperSamplingIS(true)
+                .setSamples(8)
+                .setDOFPlaneDistance(cameraPosition.distance(candlePoint))
+                .setAperture(5)
+                .setThreads(3).setintervalThread(0.1);
+        camera.setImageWriter(new ImageWriter("romanticImage", 300, 300)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
@@ -307,11 +315,7 @@ public class buildRoom {
         double kd = 1;
         double ks = 1;
         double kr = 0.001;
-        scene.setAmbientLight(new AmbientLight(GREEN, new Double3(0.1)));
         Material glassMatetrial = new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr);
-        scene.lights.add(
-                new DirectionalLight(new Color(100, 100, 100), new Vector(-1.012534429138574, -3.682651905023338, -2))
-        );
         Point cameraPosition = new Point(-850, 850, 280);
 
         Camera camera = new Camera(cameraPosition, new Point(0, 0, 150)).switchUpRight() //
@@ -340,8 +344,7 @@ public class buildRoom {
 
 
         );*/
-        Color WOODCOLOR = new Color(133, 94, 66);
-        Color DARKWOODCOLOR = new Color(77, 38, 0);
+
         Material WOODMETIRIAL = new Material().setKs(0.5).setKd(0.5).setnShininess(3);
         scene.geometries.add(
                 //walls
@@ -431,8 +434,13 @@ public class buildRoom {
 
         );
         scene.lights.add(
-                new PointLight(new Color(0.1, 0.1, 0.1), new Point(-0.5, 3.5, 2))
+                new PointLight(new Color(1000, 1000, 1000), new Point(-0.5, 3.5, 2))
         );
+        scene.lights.add(
+                new DirectionalLight(new Color(100, 100, 100), new Vector(-1.012534429138574, -3.682651905023338, -2))
+        );
+        //scene.setAmbientLight(new AmbientLight(GREEN, new Double3(0.1)));
+
         camera.setAntiAliasing(AntiAliasing.NONE);
         camera.setImageWriter(new ImageWriter("fourtables", 500, 500)) //
                 .setRayTracer(new RayTracerBasic(scene)) //

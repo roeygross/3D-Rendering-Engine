@@ -3,7 +3,7 @@ package renderer;
 import geometries.Plane;
 import primitives.*;
 import primitives.Vector;
-import java.util.stream.*;
+
 import java.util.*;
 
 /*
@@ -21,6 +21,19 @@ public class Camera {
     double width;
     double distance;
     private ImageWriter imageWriter;
+
+
+
+    public Camera setSamples(int samples) {
+        this.samples = samples;
+        return this;
+    }
+
+    public Camera setAdaptiveSuperSamplingIS(boolean adaptiveSuperSamplingIS) {
+        this.adaptiveSuperSamplingIS = adaptiveSuperSamplingIS;
+        return this;
+    }
+
     private RayTracerBase rayTracerBasic;
     /*threading 2 variubles*/
     private  double intervalThread =0;
@@ -49,6 +62,7 @@ public class Camera {
     private boolean DOF = false;
     AntiAliasing antiAliasing =AntiAliasing.DOF;
     Plane DOFPlane;
+    private boolean adaptiveSuperSamplingIS = true;
 
     public Camera setDOF(boolean DOF) {
         this.DOF = DOF;
@@ -111,26 +125,33 @@ public class Camera {
     }
 
 
-    private Color castRay (int xIndex, int yIndex)
+    private Color castRay (int xIndex, int yIndex, int nx, int ny)
     {
-            switch (antiAliasing) {
+        switch (antiAliasing) {
                 case NONE -> {
-                    return rayTracerBasic.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex, yIndex));
+                    return rayTracerBasic.traceRay(constructRay(nx, ny, xIndex, yIndex));
 
                 }
                 case GRID -> {
-                    return rayTracerBasic.traceBeamRay(constructRayBeam(yIndex, xIndex, imageWriter.getNx(), imageWriter.getNy(), samples, samples, highet / imageWriter.getNy(), width / imageWriter.getNx()));
+                    return rayTracerBasic.traceBeamRay(constructRayBeam(yIndex, xIndex, nx, ny, samples, samples, highet / ny, width / nx));
                 }
                 case Random -> {
-                    return rayTracerBasic.traceBeamRay(constructRayBeamRandom(yIndex, xIndex, imageWriter.getNx(), imageWriter.getNy(), samples, samples, highet / imageWriter.getNy(), width / imageWriter.getNx()));
+                    return rayTracerBasic.traceBeamRay(constructRayBeamRandom(yIndex, xIndex, nx, ny, samples, samples, highet / ny, width / nx));
                 }
                 case DOF -> {
-                    Ray mainRay = constructRay(imageWriter.getNx(), imageWriter.getNy(), xIndex, yIndex);
+                    Ray mainRay = constructRay(nx, ny, xIndex, yIndex);
                     if (aperture == 0) {
                         return rayTracerBasic.traceRay(mainRay);
                     }
                     Point focalPoint = DOFPlane.findIntersections(mainRay).get(0);
-                    List<Point> gridPoints = getGridDOF(xIndex, yIndex, imageWriter.getNx(), imageWriter.getNy());
+                    double pixelHighet = ny / highet;
+                    double pixelWidth = nx / width;
+                    Point center = getCenterOfPixel(yIndex,xIndex,nx,ny, pixelHighet, pixelWidth);
+                    if (adaptiveSuperSamplingIS)
+                    {
+                        return  calcAdaptiveSuperSampling(focalPoint, center, aperture, aperture);
+                    }
+                    List<Point> gridPoints = getGridDOF(xIndex, yIndex, nx, ny);
                     List<Ray> DOFBeam = Ray.generateRayBeamToPoint(gridPoints, focalPoint);
                     //List<Ray> DOFBeam = constructDOFBeam(xIndex,yIndex, imageWriter.getNx(), imageWriter.getNy(),focalPoint);
                     DOFBeam.add(mainRay);
@@ -172,7 +193,7 @@ public class Camera {
                 {
                     for (int q=0;q<nX;q++)
                     {
-                        Color color = castRay(q, i);
+                        Color color = castRay(q, i, imageWriter.getNx(), imageWriter.getNy());
                         imageWriter.writePixel(q,i, color);
                     }
                 }
@@ -186,7 +207,7 @@ public class Camera {
                     {
                         int col = pixel.col;
                         int row = pixel.row;
-                        imageWriter.writePixel(col, row,castRay(col, row));
+                        imageWriter.writePixel(col, row,castRay(col, row, imageWriter.getNx(), imageWriter.getNy()));
                     }
                 }).start();
             }
@@ -359,5 +380,82 @@ public class Camera {
         vup = tmp;
         return this;
     }
+    private List<Point> fourPointGrid(Point center,double width, double highet,boolean firstTime)
+    {
+        double widthFactor = width/2;
+        double highetFactor = highet/2;
+        if (firstTime)return List.of(center.add(vright.scale(widthFactor)).add(vup.scale(highetFactor)),center.add(vright.scale(-widthFactor)).add(vup.scale(highetFactor)),center.add(vright.scale(-highetFactor)).add(vup.scale(-widthFactor)),center.add(vright.scale(widthFactor)).add(vup.scale(-highetFactor)));
+        else return List.of(center.add(vright.scale(-widthFactor)).add(vup.scale(highetFactor)),center.add(vright.scale(-highetFactor)).add(vup.scale(-widthFactor)),center.add(vright.scale(widthFactor)).add(vup.scale(-highetFactor)));
+    }
+    Color calcAdaptiveSuperSampling(Point targetPoint, Point headPoint, double sizeX, double sizeY) {
+        Point leftUp = headPoint.add(vup.scale(sizeY / 2)).add(vright.scale(-sizeX / 2));
+        Point leftDown = headPoint.add(vup.scale(-sizeY / 2)).add(vright.scale(-sizeX / 2));
+        Point rightUp = headPoint.add(vup.scale(sizeY / 2)).add(vright.scale(sizeX / 2));
+        Point rightDown = headPoint.add(vup.scale(-sizeY / 2)).add(vright.scale(sizeX / 2));
+
+        Color leftUpColor = rayTracerBasic.traceRay(new Ray(leftUp, targetPoint.subtract(leftUp)));
+        Color leftDownColor = rayTracerBasic.traceRay(new Ray(leftDown, targetPoint.subtract(leftDown)));
+        Color rightUpColor = rayTracerBasic.traceRay(new Ray(rightUp, targetPoint.subtract(rightUp)));
+        Color rightDownColor = rayTracerBasic.traceRay(new Ray(rightDown, targetPoint.subtract(rightDown)));
+
+        double minSizeX = sizeX / samples;
+        double minSizeY = sizeY / samples;
+
+        return calcAdaptiveSuperSamplingRec(leftUp, leftUpColor, leftDown, leftDownColor, rightUp, rightUpColor, rightDown, rightDownColor, sizeX, sizeY, minSizeX, minSizeY, targetPoint);
+    }
+
+    Color calcAdaptiveSuperSamplingRec(Point leftTop, Color leftTopColor, Point leftBottom, Color leftBottomColor, Point rightUp, Color rightUpColor, Point rightBottom, Color rightBottomColor, double sizeX, double sizeY, double minSizeX, double minSizeY, Point target) {
+        Color average = (leftBottomColor.add(leftTopColor, rightBottomColor, rightUpColor)).reduce(4d);
+
+        if (average.isAlmostEquals(leftBottomColor) || sizeX <= minSizeX || sizeY <= minSizeY) {
+            return average;
+        }
+
+        // Generating a "plus" dividing the square into four squares
+        Point top = leftTop.add(vright.scale(sizeX / 2));
+        Point bottom = leftBottom.add(vright.scale(sizeX / 2));
+        Point left = leftBottom.add(vup.scale(sizeY / 2));
+        Point right = rightBottom.add(vup.scale(sizeY / 2));
+        Point middle = leftBottom.add(vup.scale(sizeY / 2)).add(vright.scale(sizeX / 2));
+
+        // Calculating colors of each point on the plus
+        Color topColor = rayTracerBasic.traceRay(new Ray(top, target.subtract(top)));
+        Color bottomColor = rayTracerBasic.traceRay(new Ray(bottom, target.subtract(bottom)));
+        Color leftColor = rayTracerBasic.traceRay(new Ray(left, target.subtract(left)));
+        Color rightColor = rayTracerBasic.traceRay(new Ray(right, target.subtract(right)));
+        Color middleColor = rayTracerBasic.traceRay(new Ray(middle, target.subtract(middle)));
+
+        // Calculating squares in this order:  sq1 sq2
+        //                                     sq3 sq4
+        Color sq1 = calcAdaptiveSuperSamplingRec(leftTop, leftTopColor, left, leftColor, top, topColor, middle, middleColor, sizeX / 2, sizeY / 2, minSizeX, minSizeY, target);
+        Color sq2 = calcAdaptiveSuperSamplingRec(top, topColor, middle, middleColor, rightUp, rightUpColor, right, rightColor, sizeX / 2, sizeY / 2, minSizeX, minSizeY, target);
+        Color sq3 = calcAdaptiveSuperSamplingRec(left, leftColor, leftBottom, leftBottomColor, middle, middleColor, bottom, bottomColor, sizeX / 2, sizeY / 2, minSizeX, minSizeY, target);
+        Color sq4 = calcAdaptiveSuperSamplingRec(middle, middleColor, bottom, bottomColor, right, rightColor, rightBottom, rightBottomColor, sizeX / 2, sizeY / 2, minSizeX, minSizeY, target);
+
+        // Average of squares is the color of the big square
+        return (sq1.add(sq2, sq3, sq4)).reduce(4);
+    }
+    private Color calcsupersampling(Point leftTop, Color leftTopColor, Point leftBottom, Color leftBottomColor, Point rightTop, Color rightTopColor, Point rightBottom, Color rightBottomColor, int level, Point target) {
+        Color Average = Color.BLACK;
+        Average = Average.add(leftBottomColor,leftTopColor, rightTopColor, rightBottomColor).reduce(4);
+        if (Average.isAlmostEquals(leftBottomColor) || level == 0)
+            return Average;
+        Point top = leftTop.add(vright.scale(leftTop.distance(rightTop) / 2));
+        Point bottom = leftBottom.add(vright.scale(leftBottom.distance(rightBottom) / 2));
+        Point left = leftBottom.add(vup.scale(leftBottom.distance(leftTop) / 2));
+        Point right = rightBottom.add(vup.scale(rightBottom.distance(rightTop) / 2));
+        Point middle = leftBottom.add(vup.scale(leftBottom.distance(leftTop) / 2)).add(vright.scale(leftBottom.distance(rightBottom) / 2));
+        Color topColor = rayTracerBasic.traceRay(new Ray(top, target.subtract(top)));
+        Color bottomColor = rayTracerBasic.traceRay(new Ray(bottom, target.subtract(bottom)));
+        Color leftColor = rayTracerBasic.traceRay(new Ray(left, target.subtract(left)));
+        Color rightColor = rayTracerBasic.traceRay(new Ray(right, target.subtract(right)));
+        Color middleColor = rayTracerBasic.traceRay(new Ray(middle, target.subtract(middle)));
+        Color sq1 = calcsupersampling(leftTop, leftTopColor, left, leftColor, top, topColor, middle, middleColor, level - 1, target);
+        Color sq2 = calcsupersampling(top, topColor, middle, middleColor, rightTop, rightTopColor, right, rightColor, level - 1, target);
+        Color sq3 = calcsupersampling(left, leftColor, leftBottom, leftBottomColor, middle, middleColor, bottom, bottomColor, level - 1, target);
+        Color sq4 = calcsupersampling(middle, middleColor, bottom, bottomColor, right, rightColor, rightBottom, rightBottomColor, level - 1, target);
+        return (sq1.add(sq2).add(sq3).add(sq4)).reduce(4);
+    }
+
 
 }
