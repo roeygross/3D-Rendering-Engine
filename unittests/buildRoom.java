@@ -44,10 +44,10 @@ public class buildRoom {
         double ks = 1;
         double kr = 0.001;
         Material glassMatetrial = new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr);
-        Point cameraPosition = new Point(-1700, 850, 260);
-
+        Point cameraPosition = new Point(-1700, 850, 260).add(new Vector(0.8961165370711887,-0.4437881832397285,-0.005215400686642294).scale(-10000));
         Camera camera = new Camera(cameraPosition, new Point(0,0,-1)).switchUpRight() //
-                .setVPSize(200, 200).setVPDistance(100).setAngle(10,new Vector(0,-1,0)).setDOFPlaneDistance(100);
+                .setVPSize(2000, 2000).setVPDistance(10000);
+        Vector vto = camera.getVto();
         Point A=new Point(0,0,0),
                 B= new Point(-3,0,0),
                 C= new Point(0,2,0),
@@ -174,9 +174,9 @@ public class buildRoom {
                 .setAdaptiveSuperSamplingIS(true)
                 .setSamples(8)
                 .setDOFPlaneDistance(cameraPosition.distance(CandlePoint))
-                .setAperture(7)
+                .setAperture(0.0007)
                 .setThreads(3).setintervalThread(0.1);
-        camera.setImageWriter(new ImageWriter("bigRoomWithCanlde", 100, 100)) //
+        camera.setImageWriter(new ImageWriter("bigRoomWithCanlde", 500, 500)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
