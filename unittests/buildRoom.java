@@ -44,7 +44,7 @@ public class buildRoom {
         double ks = 1;
         double kr = 0.001;
         Material glassMatetrial = new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr);
-        Point cameraPosition = new Point(-1700, 850, 260).add(new Vector(0.8861114972388984,-0.4430557486194492,-0.13604417692903087).scale(-750));
+        Point cameraPosition = new Point(-1700, 850, 260).add(new Vector(0.8861114972388984,-0.4430557486194492,-0.13604417692903087).scale(-770));
         Camera camera = new Camera(cameraPosition, new Point(0,0,-1)).switchUpRight() //
                 .setVPSize(2000, 2000).setVPDistance(1000);
         Vector vto = camera.getVto();
@@ -85,7 +85,7 @@ public class buildRoom {
                        RED, YELLOW, 2000, 2000, 20, 20,new Material()).getElements()
                 //floor
                 ,new Floor (new Point(0, 0, 0), new Vector(-1, 0, 0), new Vector(0, 1, 0),
-                        BLACK, WHITE, 2000, 2000, 15, 15,new Material().setkR(0.01).setKs(0.1).setKd(0.1).setnShininess(2)).getElements()
+                        BLACK, WHITE, 2100, 2100, 15, 15,new Material().setkR(0.01).setKs(0.1).setKd(0.1).setnShininess(2)).getElements()
                 //roof
                 ,new Floor (new Point(0, 0, 500), new Vector(-1, 0, 0), new Vector(0, 1, 0),
                         DARKBLUE, PURPALE, 2000, 2000, 10, 10,new Material().setkR(0.01).setKs(0.1).setKd(0.1).setnShininess(2)).getElements()
@@ -172,11 +172,11 @@ public class buildRoom {
         camera
                 .setAntiAliasing(AntiAliasing.DOF)
                 .setAdaptiveSuperSamplingIS(true)
-                .setSamples(8)
+                .setSamples(9)
                 .setDOFPlaneDistance(cameraPosition.distance(CandlePoint))
-                .setAperture(0.007)
+                .setAperture(7)
                 .setThreads(3).setintervalThread(0.1);
-        camera.setImageWriter(new ImageWriter("bigRoomWithCanlde", 500, 500)) //
+        camera.setImageWriter(new ImageWriter("bigRoomWithCanlde1", 1000, 1000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
