@@ -44,9 +44,9 @@ public class buildRoom {
         double ks = 1;
         double kr = 0.001;
         Material glassMatetrial = new Material().setkT(kt).setKd(kd).setKs(ks).setkR(kr);
-        Point cameraPosition = new Point(-1700, 850, 260).add(new Vector(0.8961165370711887,-0.4437881832397285,-0.005215400686642294).scale(-10000));
+        Point cameraPosition = new Point(-1700, 850, 260);
         Camera camera = new Camera(cameraPosition, new Point(0,0,-1)).switchUpRight() //
-                .setVPSize(2000, 2000).setVPDistance(10000);
+                .setVPSize(2000, 2000).setVPDistance(100);
         Vector vto = camera.getVto();
         Point A=new Point(0,0,0),
                 B= new Point(-3,0,0),
