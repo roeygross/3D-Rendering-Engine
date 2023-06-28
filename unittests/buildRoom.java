@@ -57,6 +57,7 @@ public class buildRoom {
                 C1= new Point(0,2,0.5),
                 D1 = new Point(-3,2,0.5);
         Material wallMatirial = new Material().setKs(0.0001).setKd(0.001).setnShininess(1);
+
         Point lampBaseB = C.add(new Point(-1, 0, 0));
        /* scene.geometries.add(
                 //new Sphere(0.5,new Point(-0.5,3.5,2)).setMaterial(glassMatetrial).setEmission(PURPALE),
@@ -165,6 +166,7 @@ public class buildRoom {
         scene.lights.add(
                 new SpotLight(new Color(250,250,250), CandlePoint.add(new Point(0,0,40)),Vector.Z.scale(-1)).setNarrowBeam(1000000000)
         );
+        double x = cameraPosition.distance(CandlePoint)-500;
 
 
 
@@ -173,8 +175,8 @@ public class buildRoom {
                 .setAntiAliasing(AntiAliasing.DOF)
                 .setAdaptiveSuperSamplingIS(true)
                 .setSamples(9)
-                .setDOFPlaneDistance(cameraPosition.distance(CandlePoint)/10)
-                .setAperture(15)
+                .setDOFPlaneDistance(1)
+                .setAperture(5)
                 .setThreads(3).setintervalThread(0.1);
         camera.setImageWriter(new ImageWriter("bigRoomWithCanlde1", 1000, 1000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
@@ -315,7 +317,7 @@ public class buildRoom {
                 .setAntiAliasing(AntiAliasing.DOF)
                 .setAdaptiveSuperSamplingIS(true)
                 .setSamples(8)
-                .setDOFPlaneDistance(cameraPosition.distance(candlePoint))
+                .setDOFPlaneDistance(cameraPosition.distance(candlePoint)-500)
                 .setAperture(5)
                 .setThreads(3).setintervalThread(0.1);
         camera.setImageWriter(new ImageWriter("romanticImage", 100, 100)) //
