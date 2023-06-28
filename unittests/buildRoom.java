@@ -173,8 +173,8 @@ public class buildRoom {
                 .setAntiAliasing(AntiAliasing.DOF)
                 .setAdaptiveSuperSamplingIS(true)
                 .setSamples(9)
-                .setDOFPlaneDistance(cameraPosition.distance(CandlePoint))
-                .setAperture(7)
+                .setDOFPlaneDistance(cameraPosition.distance(CandlePoint)/10)
+                .setAperture(15)
                 .setThreads(3).setintervalThread(0.1);
         camera.setImageWriter(new ImageWriter("bigRoomWithCanlde1", 1000, 1000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
