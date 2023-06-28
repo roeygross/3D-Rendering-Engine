@@ -175,7 +175,7 @@ public class buildRoom {
                 .setAntiAliasing(AntiAliasing.DOF)
                 .setAdaptiveSuperSamplingIS(true)
                 .setSamples(9)
-                .setDOFPlaneDistance(1)
+                .setDOFPlaneDistance(x)
                 .setAperture(5)
                 .setThreads(3).setintervalThread(0.1);
         camera.setImageWriter(new ImageWriter("bigRoomWithCanlde1", 1000, 1000)) //
@@ -317,10 +317,10 @@ public class buildRoom {
                 .setAntiAliasing(AntiAliasing.DOF)
                 .setAdaptiveSuperSamplingIS(true)
                 .setSamples(8)
-                .setDOFPlaneDistance(cameraPosition.distance(candlePoint)-500)
-                .setAperture(5)
+                .setDOFPlaneDistance(cameraPosition.distance(candlePoint)-700)
+                .setAperture(15)
                 .setThreads(3).setintervalThread(0.1);
-        camera.setImageWriter(new ImageWriter("romanticImage", 100, 100)) //
+        camera.setImageWriter(new ImageWriter("romanticImage", 1000, 10000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
