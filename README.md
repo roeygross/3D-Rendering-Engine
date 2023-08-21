@@ -1,6 +1,6 @@
 # Renderer
-In this project, we've conceptualized, designed, and executed a Java project that employed physical models 
-that is integrating camera capture functionality within a  3D digital environment.
+In this project, we've conceptualized, designed, and implemented a Java project
+that integrated camera capture capabilities into a 3D digital environment using physical models.
 The environment is powered by a user-provided database.
 
 The database is located in the BuildRoom test file in the unitests file.
