@@ -1,5 +1,5 @@
 # Renderer
-In this project, we conceptualized, designed, and executed a Java project that employed physical models,
+In this project, we've conceptualized, designed, and executed a Java project that employed physical models,
 integrating camera capture functionality within a  3D digital environment.
 The environment is powered by a user-provided database.
 
